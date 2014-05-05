@@ -5,7 +5,7 @@
  *
  * ngochien.le@haw-hamburg.de
  */
-package a02;
+package racing;
 
 /**
  * @author h13n
@@ -27,7 +27,7 @@ public class Car extends Thread implements Comparable<Car> {
 				Thread.sleep(time);
 			} catch (InterruptedException e) {
 				interrupt();
-				System.err.println("Error while sleeping");
+//				System.err.println("Error while sleeping");
 			}
 			totalTime += time;
 		}

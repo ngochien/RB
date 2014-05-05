@@ -5,7 +5,7 @@
  *
  * ngochien.le@haw-hamburg.de
  */
-package a02;
+package racing;
 
 import java.util.List;
 

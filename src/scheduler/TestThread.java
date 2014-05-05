@@ -28,7 +28,8 @@ public class TestThread extends Thread implements Reportable {
     resetCounter();
   }
 
-  public void run() {
+  @Override
+public void run() {
     /* Count activity */
     while (!isInterrupted()) {
       incCounter();

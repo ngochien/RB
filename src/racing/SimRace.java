@@ -5,7 +5,7 @@
  *
  * ngochien.le@haw-hamburg.de
  */
-package a02;
+package racing;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -17,8 +17,8 @@ import java.util.List;
  */
 public class SimRace {
 
-	public static final int NUM_OF_CARS = 50;
-	public static final int NUM_OF_LAPS = 50;
+	public static final int NUM_OF_CARS = 5;
+	public static final int NUM_OF_LAPS = 5;
 
 	private Accident accident;
 	private List<Car> cars = new LinkedList<Car>();
@@ -48,14 +48,19 @@ public class SimRace {
 		
 		accident = new Accident(cars);
 		accident.start();
-		
-		for (Car c : cars) {
-			try {
-				c.join();
-			} catch (InterruptedException e) {
-				System.err.println("Error while joinning");
-			}
+		try {
+			accident.join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
+		
+//		for (Car c : cars) {
+//			try {
+//				c.join();
+//			} catch (InterruptedException e) {
+//				System.err.println("Error while joinning");
+//			}
+//		}
 	}
 
 	public static void main(String[] args) {

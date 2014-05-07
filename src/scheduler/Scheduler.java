@@ -15,7 +15,6 @@ public class Scheduler<T extends Thread & Reportable> extends Thread {
 	public Scheduler(int timeSlice) {
 		this.timeSlice = timeSlice;
 		queue = new CircularList<T>();
-		setPriority(6);
 	}
 
 	/**
@@ -48,20 +47,21 @@ public class Scheduler<T extends Thread & Reportable> extends Thread {
 	@Override
 	public void run() {
 		T current;
-		
+		setPriority(MAX_PRIORITY);
 		while (!isInterrupted()) {
 			/* select next thread */
 			current = queue.getNext();
 			
 			if ((current != null) && (current.isAlive())) {
-				current.setPriority(4);
+				
 				/* Print Log */
 				reportThreadState();
 				System.err.println("********* New High Priority: "
 						+ current.getName());
+				current.setPriority(NORM_PRIORITY + 1);
 				/* wait until time slice is over */
 				schedulerSleep();
-				current.setPriority(2);
+				current.setPriority(MIN_PRIORITY);
 			}
 		}
 	}

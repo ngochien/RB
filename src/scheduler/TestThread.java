@@ -34,6 +34,7 @@ public void run() {
     while (!isInterrupted()) {
       incCounter();
       Math.random();
+//      System.out.println(getName());
     }
   }
 }

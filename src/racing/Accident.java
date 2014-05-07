@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class Accident extends Thread {
 	
-	private boolean happenedDuringRace;
+	private boolean happenedDuringRace = false;
 	private List<Car> cars;
 	
 	public boolean happenedDuringRace() {

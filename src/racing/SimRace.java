@@ -7,8 +7,8 @@
  */
 package racing;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -21,55 +21,55 @@ public class SimRace {
 	public static final int NUM_OF_LAPS = 5;
 
 	private Accident accident;
-	private List<Car> cars = new LinkedList<Car>();
+	private List<Car> cars = new ArrayList<Car>();
 
-	public List<Car> getCars() {
-		return cars;
+	public static void main(String[] args) {
+		SimRace race = new SimRace();
+
+		long start = System.currentTimeMillis();
+
+//		race.startWithoutAccident();
+		race.startWithAccident();
+
+		long stop = System.currentTimeMillis();
+		System.out.println("Time required : " + (stop - start));
 	}
 
-	public void printSortedListOfCars() {
-		if (!accident.happenedDuringRace()) {
-			System.out.println("***** Endstand *****");
-			Collections.sort(cars);
-			for (int i = 0; i < cars.size(); i++) {
-				System.out.println((i + 1) + ". Platz: " + cars.get(i));
+	public void startWithoutAccident() {
+		createCar();
+		for (Car car : cars) {
+			try {
+				car.join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
-		} else {
-			System.out.println("UNFALL!!! RENNEN WURDE ABGEBROCHEN.");
 		}
+		printResult();
 	}
 
-	public void startRacing() {
+	public void startWithAccident() {
+		accident = new Accident(cars);
+		accident.start();
+		startWithoutAccident();
+	}
+
+	private void createCar() {
 		for (int i = 0; i < NUM_OF_CARS; i++) {
 			Car car = new Car("Wagen " + (i + 1));
 			cars.add(car);
 			car.start();
 		}
-		
-		accident = new Accident(cars);
-		accident.start();
-		try {
-			accident.join();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		
-//		for (Car c : cars) {
-//			try {
-//				c.join();
-//			} catch (InterruptedException e) {
-//				System.err.println("Error while joinning");
-//			}
-//		}
 	}
 
-	public static void main(String[] args) {
-		SimRace race = new SimRace();
-		long start = System.currentTimeMillis();
-		race.startRacing();
-		race.printSortedListOfCars();
-		long stop = System.currentTimeMillis();
-		System.out.println("Time required : " + (stop - start));
-		System.out.println("Ended!");
+	private void printResult() {
+		if (accident.happenedDuringRace()) {
+			System.out.println("UNFALL!!! RENNEN WURDE ABGEBROCHEN.");
+		} else {
+			System.out.println("***** Endstand *****");
+			Collections.sort(cars);
+			for (int i = 0; i < cars.size(); i++) {
+				System.out.println((i + 1) + ". Platz: " + cars.get(i));
+			}
+		}
 	}
 }

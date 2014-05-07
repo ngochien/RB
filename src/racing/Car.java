@@ -8,7 +8,6 @@
 package racing;
 
 /**
- * @author h13n
  *
  */
 public class Car extends Thread implements Comparable<Car> {
@@ -18,7 +17,7 @@ public class Car extends Thread implements Comparable<Car> {
 	public Car(String name) {
 		super(name);
 	}
-	
+
 	@Override
 	public void run() {
 		for (int i = 0; i < SimRace.NUM_OF_LAPS; i++) {
@@ -27,17 +26,21 @@ public class Car extends Thread implements Comparable<Car> {
 				Thread.sleep(time);
 			} catch (InterruptedException e) {
 				interrupt();
-//				System.err.println("Error while sleeping");
 			}
 			totalTime += time;
 		}
 	}
 
 	@Override
-	public int compareTo(Car o) {
-		return this.totalTime - o.totalTime;
+	public String toString() {
+		return getName() + " Zeit: " + totalTime;
 	}
-	
+
+	@Override
+	public int compareTo(Car that) {
+		return this.totalTime - that.totalTime;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		return obj instanceof Car ? this.compareTo((Car) obj) == 0 : false;
@@ -48,8 +51,4 @@ public class Car extends Thread implements Comparable<Car> {
 		return totalTime;
 	}
 
-	@Override
-	public String toString() {
-		return getName() + " Zeit: " + totalTime;
-	}
 }

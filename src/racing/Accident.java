@@ -10,7 +10,6 @@ package racing;
 import java.util.List;
 
 /**
- * @author h13n
  *
  */
 public class Accident extends Thread {

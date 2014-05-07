@@ -12,7 +12,6 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * @author h13n
  * 
  */
 public class SimRace {

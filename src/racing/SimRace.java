@@ -24,14 +24,9 @@ public class SimRace {
 
 	public static void main(String[] args) {
 		SimRace race = new SimRace();
-
-		long start = System.currentTimeMillis();
-
+		
 //		race.startWithoutAccident();
 		race.startWithAccident();
-
-		long stop = System.currentTimeMillis();
-		System.out.println("Time required : " + (stop - start));
 	}
 
 	public void startWithoutAccident() {
@@ -61,7 +56,7 @@ public class SimRace {
 	}
 
 	private void printResult() {
-		if (accident.happenedDuringRace()) {
+		if (accident != null && accident.happenedDuringRace()) {
 			System.out.println("UNFALL!!! RENNEN WURDE ABGEBROCHEN.");
 		} else {
 			System.out.println("***** Endstand *****");

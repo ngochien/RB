@@ -48,10 +48,7 @@ public class SchedulerSimulation {
 
 	public static void main(String[] args) {
 		SchedulerSimulation myTest = new SchedulerSimulation();
-		long start = System.currentTimeMillis();
 		myTest.startSimulation();
-		long stop = System.currentTimeMillis();
-		System.out.println("Time required: " + (stop - start));
 	}
 
 }

@@ -4,11 +4,12 @@
  * Programming assignments
  *
  * ngochien.le@haw-hamburg.de
+ * bichngoc.nguyen@haw-hamburg.de
  */
 package racing;
 
 /**
- *
+ *	Simuliert ein Rennauto.
  */
 public class Car extends Thread implements Comparable<Car> {
 

@@ -4,13 +4,14 @@
  * Programming assignments
  *
  * ngochien.le@haw-hamburg.de
+ * bichngoc.nguyen@haw-hamburg.de
  */
 package racing;
 
 import java.util.List;
 
 /**
- *
+ * Simuliert einen Unfall während eines Rennens.
  */
 public class Accident extends Thread {
 	
@@ -33,6 +34,7 @@ public class Accident extends Thread {
 			e.printStackTrace();
 		}
 		
+		// Alle noch laufenden Autos werden unterbrochen.
 		for (Car car : cars) {
 			if (car.isAlive()) {
 				car.interrupt();

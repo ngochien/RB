@@ -4,6 +4,7 @@
  * Programming assignments
  *
  * ngochien.le@haw-hamburg.de
+ * bichngoc.nguyen@haw-hamburg.de
  */
 package racing;
 
@@ -12,7 +13,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * 
+ * Simuliert ein Autorennen
  */
 public class SimRace {
 
@@ -29,6 +30,9 @@ public class SimRace {
 		race.startWithAccident();
 	}
 
+	/**
+	 * Simuliert ein Rennen ohne Unfall.
+	 */
 	public void startWithoutAccident() {
 		createCar();
 		for (Car car : cars) {
@@ -41,12 +45,18 @@ public class SimRace {
 		printResult();
 	}
 
+	/**
+	 * Simuliert ein Rennen mit Unfall.
+	 */
 	public void startWithAccident() {
 		accident = new Accident(cars);
 		accident.start();
 		startWithoutAccident();
 	}
 
+	/**
+	 * Erzeugt teilnehmende Autos und lässt sie rennen.
+	 */
 	private void createCar() {
 		for (int i = 0; i < NUM_OF_CARS; i++) {
 			Car car = new Car("Wagen " + (i + 1));

@@ -47,7 +47,11 @@ public class Scheduler<T extends Thread & Reportable> extends Thread {
 	@Override
 	public void run() {
 		T current;
+		
+		// Der Scheduler bekommt die höchste Prioritaet,
+		// damit er andere Threads "steuern" kann.
 		setPriority(MAX_PRIORITY);
+		
 		while (!isInterrupted()) {
 			/* select next thread */
 			current = queue.getNext();
@@ -58,9 +62,16 @@ public class Scheduler<T extends Thread & Reportable> extends Thread {
 				reportThreadState();
 				System.err.println("********* New High Priority: "
 						+ current.getName());
-				current.setPriority(NORM_PRIORITY+3);
+				
+				// Der aktuelle Thread bekommt höhere Prioritaet im Vergleich mit anderen
+				// in der Queue, damit er die Chance hat, den CPU benutzen zu dürfen.
+				current.setPriority(NORM_PRIORITY+1);
+				
 				/* wait until time slice is over */
 				schedulerSleep();
+				
+				// Nach dem Aufwachen des Schedulers, der aktuelle Thread kriegt wieder
+				// die niedrigste Prioritaet.
 				current.setPriority(MIN_PRIORITY);
 			}
 		}

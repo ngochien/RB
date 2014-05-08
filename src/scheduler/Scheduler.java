@@ -58,7 +58,7 @@ public class Scheduler<T extends Thread & Reportable> extends Thread {
 				reportThreadState();
 				System.err.println("********* New High Priority: "
 						+ current.getName());
-				current.setPriority(NORM_PRIORITY+1);
+				current.setPriority(NORM_PRIORITY+3);
 				/* wait until time slice is over */
 				schedulerSleep();
 				current.setPriority(MIN_PRIORITY);

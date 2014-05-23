@@ -17,57 +17,68 @@ import java.util.List;
  */
 public class SimRace {
 
-	public static final int NUM_OF_CARS = 5;
-	public static final int NUM_OF_LAPS = 5;
+	public static final boolean ACCIDENT_MODUS = true;
 
-	private Accident accident;
-	private List<Car> cars = new ArrayList<Car>();
+	public static final int NUM_OF_CARS = 50;
+	public static final int NUM_OF_LAPS = 50;
+
+	private boolean crashed;
+	private List<Car> cars = new ArrayList<>();
+	private List<Thread> carThreads = new ArrayList<>();
+
 
 	public static void main(String[] args) {
-		SimRace race = new SimRace();
-		
-//		race.startWithoutAccident();
-		race.startWithAccident();
+		SimRace simulation = new SimRace();
+		simulation.start();
 	}
 
 	/**
-	 * Simuliert ein Rennen ohne Unfall.
+	 * Simuliert ein Rennen
 	 */
-	public void startWithoutAccident() {
-		createCar();
-		for (Car car : cars) {
-			try {
-				car.join();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+	public void start() {
+		Thread accident = new Thread(new Accident(Thread.currentThread()));
+		if (ACCIDENT_MODUS) {
+			accident.start();
 		}
+		startRacing();
+		waitToFinish();
 		printResult();
+		accident.interrupt();
 	}
 
-	/**
-	 * Simuliert ein Rennen mit Unfall.
-	 */
-	public void startWithAccident() {
-		accident = new Accident(cars);
-		accident.start();
-		startWithoutAccident();
-	}
-
-	/**
+	/*
 	 * Erzeugt teilnehmende Autos und lässt sie rennen.
 	 */
-	private void createCar() {
+	private void startRacing() {
 		for (int i = 0; i < NUM_OF_CARS; i++) {
-			Car car = new Car("Wagen " + (i + 1));
-			cars.add(car);
-			car.start();
+			cars.add(new Car("Wagen " + (i + 1)));
+			carThreads.add(new Thread(cars.get(i)));
+			carThreads.get(i).start();
+		}
+	}
+
+	/*
+	 * Wartet auf die rennenden Autos, bis sie ans Ziel kommen. Falls sich ein
+	 * Unfall ereignet, stoppt alle noch laufenden Autos.
+	 */
+	private void waitToFinish() {
+		try {
+			for (Thread t : carThreads) {
+				t.join();
+			}
+		} catch (InterruptedException e) {
+			crashed = true;
+			for (Thread t : carThreads) {
+				t.interrupt();
+				
+			}
+			Thread.currentThread().interrupt();
 		}
 	}
 
 	private void printResult() {
-		if (accident != null && accident.happenedDuringRace()) {
-			System.out.println("UNFALL!!! RENNEN WURDE ABGEBROCHEN.");
+		if (crashed) {
+			System.out.println("UNFALL");
 		} else {
 			System.out.println("***** Endstand *****");
 			Collections.sort(cars);

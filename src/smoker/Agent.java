@@ -11,7 +11,7 @@ package smoker;
  * @author h13n
  * 
  */
-public class Agent extends Thread {
+public class Agent implements Runnable {
 
 	private Table table;
 
@@ -23,12 +23,17 @@ public class Agent extends Thread {
 	@Override
 	public void run() {
 		int i = 0;
-		while (!isInterrupted()) {
-			table.put(Ingredient.getCoupleOfIngredients());
-			System.out.println("**********" + i + "************");
+		while (!Thread.currentThread().isInterrupted()) {
+			Item item1 = Item.randomItem();
+			Item item2 = Item.randomItem();
+			while (item1 == item2) {
+				item2 = Item.randomItem();
+			}
+			table.put(item1, item2);
+			System.out.println("Putted " + item1 + " " + item2);
+//			System.err.println("********************AGENT:" + i + "********************");
 			i++;
 		}
-//		System.out.println(Thread.currentThread().getName() + " is interrupted");
-		System.out.println(Thread.currentThread().getName() + " is done");
+		System.err.println(Thread.currentThread().getName() + " : The agent is interrupted");
 	}
 }

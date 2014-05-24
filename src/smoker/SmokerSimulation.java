@@ -17,21 +17,16 @@ public class SmokerSimulation {
 		
 		Table table = new Table();
 		
-//		Smoker tobacco = new Smoker(table, Ingredient.TOBACCO);
-//		Smoker paper = new Smoker(table, Ingredient.PAPER);
-//		Smoker match = new Smoker(table, Ingredient.MATCH);
-//		
-//		Agent agent = new Agent(table);
+		Agent agent = new Agent(table);
 		
-//		Thread t1 = new Thread(agent, "agent");
-//		Thread t2 = new Thread(tobacco, "tobacco");
-//		Thread t3 = new Thread(paper, "paper");
-//		Thread t4 = new Thread(match, "match");
+		Smoker tobacco = new Smoker(table, Item.TOBACCO);
+		Smoker paper = new Smoker(table, Item.PAPER);
+		Smoker match = new Smoker(table, Item.MATCH);
 		
-		Thread t1 = new Smoker(table, Ingredient.TOBACCO); t1.setName("Tobacco");
-		Thread t2 = new Smoker(table, Ingredient.PAPER); t2.setName("Paper");
-		Thread t3 = new Smoker(table, Ingredient.MATCH); t3.setName("Match");
-		Thread t4 = new Agent(table); t4.setName("Agent");
+		Thread t1 = new Thread(agent, "Agent");
+		Thread t2 = new Thread(tobacco, "Tobacco-man");
+		Thread t3 = new Thread(paper, "Paper-man");
+		Thread t4 = new Thread(match, "Match-man");
 		
 		t1.start();
 		t2.start();
@@ -41,15 +36,14 @@ public class SmokerSimulation {
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.println("WTFWTFWTFWTFWTFWTFWTFWTFWTFWTF");
 		}
-		System.err.println("-----------------main-----------------");
-		
+//		System.err.println("--------------------Alles stoppt--------------------");
 //		t1.interrupt();
 //		t2.interrupt();
 //		t3.interrupt();
 //		t4.interrupt();
+//		System.err.println("--------------------Simulation endet--------------------");
 	}
 
 }

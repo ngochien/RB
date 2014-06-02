@@ -15,6 +15,7 @@ public class SmokerSimulation {
 
 	public static void main(String[] args) {
 		
+		System.out.println("Eclipse and Netbeans");
 		Table table = new Table();
 		
 		Agent agent = new Agent(table);

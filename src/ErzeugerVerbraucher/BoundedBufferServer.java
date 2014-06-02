@@ -13,7 +13,7 @@ public class BoundedBufferServer {
   public final int NO_CONSUMER = 2; // Anzahl Verbraucher-Threads
   public final int BUFFER_SIZE = 2; // Gewuenschte max. Puffergroesse
   /* Synchronisationsmechanismus */
-  public final BoundedBufferFactory.SyncType SYNC_TYPE = BoundedBufferFactory.SyncType.COND_QUEUES;
+  public final BoundedBufferFactory.SyncType SYNC_TYPE = BoundedBufferFactory.SyncType.SEMAPHORE;
   public final int SIMULATION_TIME = 1000; // Gewuenschte Simulationsdauer in ms
 
   /*

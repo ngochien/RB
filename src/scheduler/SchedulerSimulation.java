@@ -8,7 +8,7 @@ package scheduler;
  * 
  */
 public class SchedulerSimulation {
-	static final int NUMBER_OF_PROCESSORS = 4;
+	static final int NUMBER_OF_PROCESSORS = 2;
 	static final int NUMBER_OF_TESTTHREADS = NUMBER_OF_PROCESSORS * 5;
 	static final int DEFAULT_TIME_SLICE = 300; // Zeitscheibe in ms
 	static final int SIMULATION_TIME = NUMBER_OF_TESTTHREADS

@@ -9,8 +9,7 @@
 package smoker;
 
 /**
- * Der Raucher hat nur eine Zutat und wartet an dem Tisch auf die zwei fehlenden
- * Zutaten.
+ * Der Raucher hat eine Zutat und wartet an dem Tisch auf die zwei fehlenden Zutaten.
  * 
  * @author Le, Nguyen.
  */
@@ -21,7 +20,6 @@ public class Smoker implements Runnable {
 	private Item item;
 
 	public Smoker(Table table, Item item) {
-		System.out.println("Smoker with " + item + " is ready");
 		this.table = table;
 		this.item = item;
 	}
@@ -31,7 +29,5 @@ public class Smoker implements Runnable {
 		while (!Thread.currentThread().isInterrupted()) {
 			table.take(item);
 		}
-		System.err
-				.println(Thread.currentThread().getName() + " is interrupted");
 	}
 }

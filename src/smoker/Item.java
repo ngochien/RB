@@ -18,11 +18,7 @@ public enum Item {
 	 * Eins von den drei Zutaten wird zufällig gewählt.
 	 */
 	public static Item random() {
-		// System.out.println(Thread.currentThread().getName() +
-		// " :Preparing an item");
 		Item item = Item.values()[(int) (Math.random() * 3)];
-		// System.out.println(Thread.currentThread().getName() + " :Returning "
-		// + item);
 		return item;
 	}
 }

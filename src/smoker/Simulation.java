@@ -1,17 +1,19 @@
-/**
+/*
  * Hamburg University of Applied Sciences
  *
  * Programming assignments
  *
  * ngochien.le@haw-hamburg.de
  */
+
 package smoker;
 
 /**
- * @author h13n
+ * Testing class.
  * 
+ * @author h13n
  */
-public class SmokerSimulation {
+public class Simulation {
 	
 	public static final int SIMULATION_TIME = 1000;
 	
@@ -37,13 +39,14 @@ public class SmokerSimulation {
 		try {
 			Thread.sleep(SIMULATION_TIME);
 		} catch (InterruptedException e) {
-			System.err.println("WTFWTFWTFWTFWTFWTFWTFWTFWTFWTF");
+			Thread.currentThread().interrupt();
+			e.printStackTrace();
 		}
-		 System.err.println("--------------------Alles stoppt--------------------");
+		 
 		 t1.interrupt();
 		 t2.interrupt();
 		 t3.interrupt();
 		 t4.interrupt();
-		 System.err.println("--------------------Simulation endet--------------------");
+		 System.out.println("--------------------Simulation endet--------------------");
 	}
 }

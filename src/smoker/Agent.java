@@ -9,8 +9,7 @@
 package smoker;
 
 /**
- * Der Agent, der zwei zufällig ausgewählte Zutaten auf den gemeinsamen Tisch
- * legt.
+ * Der Agent legt zwei zufällig ausgewählte Zutaten auf den gemeinsamen Tisch.
  * 
  * @author Le, Nguyen.
  */
@@ -19,7 +18,6 @@ public class Agent implements Runnable {
 	private Table table;
 
 	public Agent(Table table) {
-		System.out.println("The agent is ready");
 		this.table = table;
 	}
 
@@ -37,7 +35,5 @@ public class Agent implements Runnable {
 			/* Lege zwei gewählte Zutaten auf den Tisch */
 			table.put(item1, item2);
 		}
-		System.err.println(Thread.currentThread().getName()
-				+ " : The agent is interrupted");
 	}
 }

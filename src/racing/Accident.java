@@ -8,38 +8,24 @@
  */
 package racing;
 
-import java.util.List;
-
 /**
  * Simuliert einen Unfall während eines Rennens.
  */
-public class Accident extends Thread {
-	
-	private boolean happenedDuringRace = false;
-	private List<Car> cars;
-	
-	public boolean happenedDuringRace() {
-		return happenedDuringRace;
-	}
+public class Accident implements Runnable {
 
-	public Accident(List<Car> cars) {
-		this.cars = cars;
+	private Thread race;
+
+	public Accident(Thread race) {
+		this.race = race;
 	}
 
 	@Override
 	public void run() {
 		try {
 			Thread.sleep((int) (Math.random() * SimRace.NUM_OF_LAPS * 100));
+			race.interrupt();
 		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		
-		// Alle noch laufenden Autos werden unterbrochen.
-		for (Car car : cars) {
-			if (car.isAlive()) {
-				car.interrupt();
-				happenedDuringRace = true;
-			}
+			Thread.currentThread().interrupt();
 		}
 	}
 }

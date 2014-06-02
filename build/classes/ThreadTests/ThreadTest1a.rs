@@ -1,0 +1,3 @@
+ThreadTests.ThreadTest1a
+ThreadTests.MyThreadZahl
+ThreadTests.MyThreadText

@@ -9,32 +9,33 @@
 package racing;
 
 /**
- *	Simuliert ein Rennauto.
+ * Simuliert ein Rennauto.
  */
-public class Car extends Thread implements Comparable<Car> {
+public class Car implements Runnable, Comparable<Car> {
 
+	private String name;
 	private int totalTime;
-
+	
 	public Car(String name) {
-		super(name);
+		this.name = name;
 	}
 
 	@Override
 	public void run() {
-		for (int i = 0; i < SimRace.NUM_OF_LAPS; i++) {
-			int time = (int) (Math.random() * 100);
-			try {
+		try {
+			for (int i = 0; i < SimRace.NUM_OF_LAPS; i++) {
+				int time = (int) (Math.random() * 100);
 				Thread.sleep(time);
-			} catch (InterruptedException e) {
-				interrupt();
+				totalTime += time;
 			}
-			totalTime += time;
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
 		}
 	}
 
 	@Override
 	public String toString() {
-		return getName() + " Zeit: " + totalTime;
+		return name + " - gebrauchte Zeit: " + totalTime;
 	}
 
 	@Override

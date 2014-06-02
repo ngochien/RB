@@ -1,15 +1,18 @@
-/**
+/*
  * Hamburg University of Applied Sciences
  *
  * Programming assignments
  *
  * ngochien.le@haw-hamburg.de
  */
+
 package smoker;
 
 /**
- * @author h13n
+ * Der Agent, der zwei zufällig ausgewählte Zutaten auf den gemeinsamen Tisch
+ * legt.
  * 
+ * @author Le, Nguyen.
  */
 public class Agent implements Runnable {
 
@@ -22,18 +25,20 @@ public class Agent implements Runnable {
 
 	@Override
 	public void run() {
-		int i = 0;
 		while (!Thread.currentThread().isInterrupted()) {
-			Item item1 = Item.randomItem();
-			Item item2 = Item.randomItem();
+
+			/* Wähle zufällig zwei Zutaten */
+			Item item1 = Item.random();
+			Item item2 = Item.random();
 			while (item1 == item2) {
-				item2 = Item.randomItem();
+				item2 = Item.random();
 			}
+
+			/* Lege zwei gewählte Zutaten auf den Tisch */
 			table.put(item1, item2);
-			System.out.println("Putted " + item1 + " " + item2);
-//			System.err.println("********************AGENT:" + i + "********************");
-			i++;
+//			System.out.println("Putted " + item1 + " " + item2);
 		}
-		System.err.println(Thread.currentThread().getName() + " : The agent is interrupted");
+		System.err.println(Thread.currentThread().getName()
+				+ " : The agent is interrupted");
 	}
 }

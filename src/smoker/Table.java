@@ -1,165 +1,76 @@
-/**
+/*
  * Hamburg University of Applied Sciences
  *
  * Programming assignments
  *
  * ngochien.le@haw-hamburg.de
  */
+
 package smoker;
 
 /**
- * @author h13n
+ * Der gemeinsame Tisch von dem Agenten und den drei Rauchern.
  * 
+ * @author Le, Nguyen.
  */
 public class Table {
 
 	private Item item1;
 	private Item item2;
 
-	public synchronized boolean hasTwoItem() {
-		boolean hasTwo = item1 != null && item2 != null;
-//		System.out.println(Thread.currentThread().getName()
-//				+ " :Checking if there are two items on the table? " + hasTwo);
-		return hasTwo;
-	}
-
-	public synchronized void reset() {
-//		System.out.println(Thread.currentThread().getName() + " :reseting table");
-		item1 = null;
-		item2 = null;
-//		System.out.println(Thread.currentThread().getName() + " :Reset done. Notifying all");
-		notifyAll();
-	}
-
+	/**
+	 * Der Agent ruft diese Methode auf, um zwei Zutaten auf den Tisch zu legen.
+	 */
 	public synchronized void put(Item item1, Item item2) {
 //		System.out.println(Thread.currentThread().getName()
 //				+ " :Trying to put " + item1 + " and " + item2);
 
-		while (hasTwoItem() && !Thread.currentThread().isInterrupted()) {
+		while (this.item1 != null && this.item2 != null) {
 			try {
-//				System.out.println(Thread.currentThread().getName() + " :Waiting for putting");
+//				System.out.println(Thread.currentThread().getName()
+//						+ " :Waiting for putting");
 				wait();
 			} catch (InterruptedException e) {
 				Thread.currentThread().interrupt();
-				System.err.println(Thread.currentThread().getName()
-						+ " :Error while waiting for putting");
+				// System.err.println(Thread.currentThread().getName()
+				// + " :Error while waiting for putting");
 				return;
 			}
 		}
-//		System.out.println(Thread.currentThread().getName() + " :Putting " + item1 + " and " + item2);
+//		System.out.println(Thread.currentThread().getName() + " :Putting "
+//				+ item1 + " and " + item2);
 		this.item1 = item1;
 		this.item2 = item2;
-//		System.out.println(Thread.currentThread().getName() + " :" + this + ". Notifying all. ");
+		System.out.println(Thread.currentThread().getName() + " :" + this
+				+ ". Notifying all. ");
 		notifyAll();
 	}
 
-	public synchronized Item takeItem1() {
+	/**
+	 * Ein Raucher ruft diese Methode auf, um beide Zutaten auf dem Tisch
+	 * wegzunehmen.
+	 */
+	public synchronized void take(Item missingItem) {
 //		System.out.println(Thread.currentThread().getName()
-//				+ " :Trying to take item1 - " + item1);
-		while (!hasTwoItem() && !Thread.currentThread().isInterrupted()) {
+//				+ " :Trying to take and smoke with " + missingItem);
+
+		while (item1 == null || item2 == null || item1 == missingItem || item2 == missingItem) {
 			try {
 //				System.out.println(Thread.currentThread().getName()
-//						+ " :Waiting for item1 - " + item1);
+//						+ " :Waiting for smoking");
 				wait();
 			} catch (InterruptedException e) {
-				System.err.println(Thread.currentThread().getName()
-						+ " :Error while waiting for item1 - " + item1);
+				// System.err.println(Thread.currentThread().getName()
+				// + " :Error while waiting for item1 - " + item1);
 				Thread.currentThread().interrupt();
-				return null;
+				return;
 			}
 		}
-//		System.out.println(Thread.currentThread().getName() + " :Taked "
-//				+ item1 + " OK. NOT Notifying all");
-//		notifyAll();
-		return item1;
-	}
-
-	public synchronized Item takeItem2() {
-//		System.out.println(Thread.currentThread().getName()
-//				+ " :Trying to taking item2 - " + item2);
-		while (!hasTwoItem() && !Thread.currentThread().isInterrupted()) {
-			try {
-//				System.out.println(Thread.currentThread().getName()
-//						+ " :Waiting for item2 - " + item2);
-				wait();
-			} catch (InterruptedException e) {
-				System.err.println(Thread.currentThread().getName()
-						+ " :Error while waiting for item2 - " + item2);
-				Thread.currentThread().interrupt();
-				return null;
-			}
-		}
-//		System.out.println(Thread.currentThread().getName() + " :Taked "
-//				+ item2 + " OK. NOT Notifying all");
-//		notifyAll();
-		return item2;
-	}
-
-	private synchronized Item checkItem(Item anItem) {
-		System.out.println(Thread.currentThread().getName() + " :Checking "
-				+ anItem);
-		Item item = anItem;
-		while (!hasTwoItem() && !Thread.currentThread().isInterrupted()) {
-			try {
-				System.out.println(Thread.currentThread().getName()
-						+ " :Waiting");
-				wait();
-			} catch (InterruptedException e) {
-				System.err.println(Thread.currentThread().getName()
-						+ " :Error while checking " + anItem);
-				Thread.currentThread().interrupt();
-				return null;
-			}
-		}
-		System.out.println(Thread.currentThread().getName() + " :Checking "
-				+ anItem + " OK. Notifying all");
+		item1 = null;
+		item2 = null;
+		System.out.println(Thread.currentThread().getName()
+				+ " :Taked all. Notifying all");
 		notifyAll();
-		return item;
-	}
-
-	// public synchronized Ingredient[] take() {
-	// System.out.println(Thread.currentThread().getName()
-	// + " :Trying to take " + this.ingredients[0] + " and "
-	// + this.ingredients[1]);
-	// while (isEmpty() && !Thread.currentThread().isInterrupted()) {
-	// try {
-	// System.out.println(Thread.currentThread().getName()
-	// + " :Waiting");
-	// wait();
-	// } catch (InterruptedException e) {
-	// Thread.currentThread().interrupt();
-	// System.err.println(Thread.currentThread().getName()
-	// + " :Error while waiting for taking");
-	// }
-	// }
-	// ingredients[0] = null;
-	// ingredients[1] = null;
-	// System.out.println(Thread.currentThread().getName()
-	// + " :Done with taking. Notifying all");
-	// notifyAll();
-	// return ingredients;
-	// }
-
-	public synchronized Item[] look() {
-		// System.out.println(Thread.currentThread().getName() +
-		// " :Trying to take " + this.ingredients[0] + " and " +
-		// this.ingredients[1]);
-		// while (isEmpty() && !Thread.currentThread().isInterrupted()) {
-		// try {
-		// System.out.println(Thread.currentThread().getName() + " :Waiting");
-		// wait();
-		// } catch (InterruptedException e) {
-		// //
-		// Thread.currentThread().interrupt();
-		// System.err.println(Thread.currentThread().getName() +
-		// " :Error while waiting for taking");
-		// // e.printStackTrace();
-		// }
-		// }
-		// System.out.println(Thread.currentThread().getName() +
-		// " :Done with taking. Notifying all");
-		// notifyAll();
-		return null;
 	}
 
 	@Override

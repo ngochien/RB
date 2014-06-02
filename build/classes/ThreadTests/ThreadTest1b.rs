@@ -1,0 +1,3 @@
+ThreadTests.MyRunnableText
+ThreadTests.MyRunnableZahl
+ThreadTests.ThreadTest1b

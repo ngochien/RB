@@ -36,7 +36,6 @@ public class Agent implements Runnable {
 
 			/* Lege zwei gewählte Zutaten auf den Tisch */
 			table.put(item1, item2);
-//			System.out.println("Putted " + item1 + " " + item2);
 		}
 		System.err.println(Thread.currentThread().getName()
 				+ " : The agent is interrupted");

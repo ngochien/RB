@@ -30,16 +30,6 @@ public class Smoker implements Runnable {
 	public void run() {
 		while (!Thread.currentThread().isInterrupted()) {
 			table.take(item);
-			try {
-				Thread.sleep((int) (Math.random() * 100));
-//				System.out.println(Thread.currentThread().getName()
-//						+ " :Done with smoking");
-			} catch (InterruptedException e) {
-				Thread.currentThread().interrupt();
-				// System.err.println(Thread.currentThread().getName()
-				// + " :Error while sleeping (smoking)");
-//				return; // not necessary?
-			}
 		}
 		System.err
 				.println(Thread.currentThread().getName() + " is interrupted");

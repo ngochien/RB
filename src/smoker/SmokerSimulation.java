@@ -12,14 +12,14 @@ package smoker;
  * 
  */
 public class SmokerSimulation {
-
+	
+	public static final int SIMULATION_TIME = 1000;
+	
 	public static void main(String[] args) {
-
-		System.out.println("Eclipse and Netbeans");
 		Table table = new Table();
-
+		
 		Agent agent = new Agent(table);
-
+		
 		Smoker tobacco = new Smoker(table, Item.TOBACCO);
 		Smoker paper = new Smoker(table, Item.PAPER);
 		Smoker match = new Smoker(table, Item.MATCH);
@@ -35,7 +35,7 @@ public class SmokerSimulation {
 		t4.start();
 
 		try {
-			Thread.sleep(1000);
+			Thread.sleep(SIMULATION_TIME);
 		} catch (InterruptedException e) {
 			System.err.println("WTFWTFWTFWTFWTFWTFWTFWTFWTFWTF");
 		}

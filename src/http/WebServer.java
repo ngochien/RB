@@ -29,14 +29,14 @@ public class WebServer {
 
 	private static final String DEFAULT_FILE = "index.html";
 
-	private int requests;
+	private int counter;
 
-	private int maxRequests;
+	private int max;
 
 	private int port;
 
-	public WebServer(int maxRequests, int port) {
-		this.maxRequests = maxRequests;
+	public WebServer(int max, int port) {
+		this.max = max;
 		this.port = port;
 	}
 
@@ -44,21 +44,15 @@ public class WebServer {
 		try (ServerSocket serverSocket = new ServerSocket(port)) {
 			while (true) {
 				Socket clientSocket = serverSocket.accept();
-				new WorkerThread(requests(), clientSocket, this).start();
+				new WorkerThread(clientSocket).start();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-			System.out.println(e);
 		}
 	}
 
-	private synchronized int requests() {
-		return requests;
-	}
-
-	private synchronized void increaseRequests() {
-
-		while (requests == maxRequests) {
+	private synchronized void increaseCounter() {
+		while (counter >= max) {
 			try {
 				System.out.println(Thread.currentThread().getName() +
 						" Waitingggggggggggggggggggggggggggggggggggggggggggggggg");
@@ -68,11 +62,11 @@ public class WebServer {
 			}
 		}
 		System.out.println(Thread.currentThread().getName() + " Incr");
-		requests++;
+		counter++;
 	}
 
-	private synchronized void decreaseRequests() {
-		requests--;
+	private synchronized void decreaseCounter() {
+		counter--;
 		notify();
 		System.out.println(Thread.currentThread().getName() + " Decr");
 	}
@@ -85,81 +79,90 @@ public class WebServer {
 
 	class WorkerThread extends Thread {
 
-		private int id;
-
 		private Socket socket;
-
-		private WebServer server;
 
 		private BufferedReader inFromClient;
 
 		private DataOutputStream outToClient;
 
-		private String statusLine = "HTTP/1.0 400 Bad\n";
+		private String statusLine = "HTTP/1.0 200 OK\n";
 
-		public WorkerThread(int id, Socket socket, WebServer server) {
-			this.id = id;
+		private String contentType = "text/html\n";
+
+		private String setCookie = "Set-Cookie: " + getName();
+
+		public WorkerThread(Socket socket) {
 			this.socket = socket;
-			this.server = server;
 		}
 
 		@Override
 		public void run() {
-			increaseRequests();
-			System.out.println("Thread " + id);
+			increaseCounter();
+			System.out.println(getName() + " started.");
 			try {
 				inFromClient = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 				outToClient = new DataOutputStream(socket.getOutputStream());
 				sendResponse(receiveRequest());
 				socket.close();
-				System.out.println("Thread closed " + id);
 			} catch (IOException e) {
 				e.printStackTrace();
-				System.out.println(e);
+				System.err.println("Connection error: " + e.getMessage());
+			} finally {
+				System.out.println(getName() + " stopped!");
+				decreaseCounter();
 			}
-			decreaseRequests();
 		}
 
-		private String receiveRequest() {
+		private String receiveRequest() throws IOException {
 			Pattern requestLine = Pattern.compile("GET\\s+/(.*)\\s+HTTP/1\\.[01]");
-
 			String resource = null;
-			try {
-				String line = inFromClient.readLine();
-				Matcher matcher = requestLine.matcher(line);
-				if (matcher.matches()) {
-					resource = matcher.group(1);
-					System.out.println("URL : " + resource);
+			String line = inFromClient.readLine();
+			Matcher matcher = requestLine.matcher(line);
+			if (matcher.matches()) {
+				resource = matcher.group(1);
+				System.out.println("Requested resource from client: " + resource);
+			} else {
+				httpError(400, "Bad Request");
+			}
+			System.out.println("Request header fields from client :");
+			for (line = inFromClient.readLine(); !line.isEmpty(); line = inFromClient.readLine()) {
+				System.out.println("\t" + line);
+				if (line.startsWith("User-Agent") && !line.contains("Firefox")) {
+					System.err.println("\tWARNING from server: non-Firefox user.");
 				}
-
-				System.out.println("Request header fields from client :");
-				for (line = inFromClient.readLine(); !line.isEmpty(); line = inFromClient.readLine()) {
-					System.out.println("\t" + line);
-					if (line.startsWith("User-Agent") && !line.contains("Firefox")) {
-						System.err.println("WARNING: Non Firefox-user");
-					}
-				}
-
-			} catch (IOException e) {
-				e.printStackTrace();
 			}
 			return resource;
 		}
 
-		private void sendResponse(String resource) {
-			try {
-				outToClient.writeBytes(statusLine);
-				outToClient.writeBytes("\n");
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			// sendData(resource);
+		private void sendResponse(String resource) throws IOException {
+			// byte[] data = getData(resource);
+			// if (data == null) {
+			// httpError(404, "Not Found");
+			// } else {
+			outToClient.writeBytes(statusLine);
+			outToClient.writeBytes("Content-Length: " + 1234);
+			outToClient.writeBytes("Content-Type: " + contentType);
+			// outToClient.writeBytes(setCookie);
+			outToClient.writeBytes("\n\n");
+			sendData(resource);
 		}
 
-		private void sendData(String absolutePath) {
+		// private byte[] getData(String resource) {
+		// String separator = File.separator;
+		// resource = ROOT_DIR + separator + resource;
+		// try {
+		// return Files.readAllBytes(Paths.get(resource));
+		// } catch (IOException e1) {
+		// e1.printStackTrace();
+		// // httpError(404, "Not Found");
+		// return null;
+		// }
+		// }
+
+		private void sendData(String resource) {
 			String separator = File.separator;
-			absolutePath = ROOT_DIR + separator + absolutePath;
-			try (FileInputStream inFile = new FileInputStream(absolutePath)) {
+			resource = ROOT_DIR + separator + resource;
+			try (FileInputStream inFile = new FileInputStream(resource)) {
 				byte[] buffer = new byte[1024];
 				int contentLeng = 0;
 				int len;
@@ -173,6 +176,23 @@ public class WebServer {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+		}
+
+		/**
+		 * Eine Fehlerseite an den Browser senden.
+		 * 
+		 * @throws IOException
+		 */
+		private void httpError(int code, String description) throws IOException {
+			String html = "<html><head><title>RBPAufgabe4</title></head><body>"
+					+ "<h1>HTTP/1.0 " + code + "</h1><h3>" + description + "</h3></body></html>";
+
+			statusLine = "HTTP/1.0 " + code + " " + description + "\n";
+			outToClient.writeBytes(statusLine);
+			outToClient.writeBytes("Content-Type: " + contentType);
+			outToClient.writeBytes(setCookie);
+			outToClient.writeBytes("\n\n");
+			outToClient.writeBytes(html);
 		}
 	}
 }

@@ -15,7 +15,7 @@ package smoker;
  */
 public class Simulation {
 	
-	public static final int SIMULATION_TIME = 1000;
+	public static final int SIMULATION_TIME = 10000;
 	
 	public static void main(String[] args) {
 		Table table = new Table();

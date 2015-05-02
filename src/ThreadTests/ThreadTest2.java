@@ -23,7 +23,8 @@ public class ThreadTest2 {
 
 class MyThread2 extends Thread {
   /* Hochz�hlen und Zahlen ausgeben */
-  public void run() {
+  @Override
+public void run() {
     int i = 0;
     while (true) {
       System.err.println(i++);

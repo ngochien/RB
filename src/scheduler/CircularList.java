@@ -6,7 +6,7 @@ package scheduler;
  * This class implements a circular list using the ArrayList class
  *
  */
-import java.util.*;
+import java.util.ArrayList;
 
 public class CircularList<E> {
 	

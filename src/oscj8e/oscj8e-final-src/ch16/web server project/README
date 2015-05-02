@@ -1,0 +1,28 @@
+This explains how the sample programs are to be run:
+
+1) HttpRequestMirror.java - This program demonstrates what a client web browser sends
+to the server. To start this program, enter
+
+	java HttpRequestMirror
+
+This program listens to port 1500.
+
+Next, enter the URL in your client browser (running on the same machine as your server):
+
+	http://localhost:1500/
+
+You can experiment with different URLs such as
+
+	http://localhost:1500/docs/other.html
+
+2) HttpHeader.java - This program demonstrates the headers returned by a web server. 
+To test this program, enter
+
+	java HttpHeader <web server> <document>
+
+such as
+	
+	java HttpHeader www.xmission.com index.html
+
+
+

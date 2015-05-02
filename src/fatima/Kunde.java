@@ -17,11 +17,11 @@ public class Kunde {
 	
 	int verweilszeit;
 	
-	int getVerweilszeit() {
+	public int getVerweilszeit() {
 		return verweilszeit;
 	}
 	
-	void setVerweilszeit(int verweilszeit) {
+	public void setVerweilszeit(int verweilszeit) {
 		this.verweilszeit = verweilszeit;
 	}
 	

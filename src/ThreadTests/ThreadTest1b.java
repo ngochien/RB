@@ -29,7 +29,8 @@ public class ThreadTest1b {
 /* Eigene Klasse */
 class MyRunnableZahl implements Runnable {
   /* Hochz�hlen und Zahlen ausgeben */
-  public void run() {
+  @Override
+public void run() {
     for (int i = 0; i < 10000; i++) {
       System.err.println(i);
     }
@@ -39,7 +40,8 @@ class MyRunnableZahl implements Runnable {
 /* Eigene Klasse */
 class MyRunnableText implements Runnable {
   /* Intelligenten Text ausgeben */
-  public void run() {
+  @Override
+public void run() {
     for (int i = 0; i < 10000; i++) {
       System.err.println("------------ Ich bin auch noch da! ");
     }

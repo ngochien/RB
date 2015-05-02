@@ -37,7 +37,8 @@ public class ThreadTest5 {
 
 class MyThread5 extends Thread {
   /* Bis 100 hochz�hlen und Zahlen ausgeben */
-  public void run() {
+  @Override
+public void run() {
     int i;
     for (i = 0; i < 10; i++) {
       System.err.println(i);

@@ -40,7 +40,8 @@ public class ThreadTest6 {
 
 class MyThread6a extends Thread {
   /* Hochz�hlen und Zahlen ausgeben */
-  public void run() {
+  @Override
+public void run() {
     int i = 0;
     /* Interrupt-Flag abfragen */
     while (!isInterrupted()) {
@@ -51,7 +52,8 @@ class MyThread6a extends Thread {
 
 class MyThread6b extends Thread {
   /* Intelligenten Text ausgeben */
-  public void run() {
+  @Override
+public void run() {
     /* Interrupt-Flag abfragen */
     while (!isInterrupted()) {
       System.err.println("------------ Hallo! --------------");

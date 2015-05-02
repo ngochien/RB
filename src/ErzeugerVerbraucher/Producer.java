@@ -5,7 +5,7 @@ package ErzeugerVerbraucher;
  Autor: M. H�bner
  Zweck: Code der Erzeuger-Threads f�r ein Erzeuger/Verbrauchersystem
  */
-import java.util.*;
+import java.util.Date;
 
 public class Producer extends Thread {
   /* Code der Erzeuger-Threads f�r ein Erzeuger/Verbrauchersystem */
@@ -21,7 +21,8 @@ public class Producer extends Thread {
     currentBuffer = buffer;
   }
 
-  public void run() {
+  @Override
+public void run() {
     /*
      * Erzeuge Date-Objekte und lege sie in den Puffer. Halte nach jeder
      * Ablage f�r eine Zufallszeit an.

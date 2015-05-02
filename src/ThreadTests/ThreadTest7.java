@@ -79,6 +79,7 @@ class MyThread7a extends Thread {
 		this.outputServer = outputServer;
 	}
 
+	@Override
 	public void run() {
 		int i = 0;
 		/* Interrupt-Flag abfragen */
@@ -97,6 +98,7 @@ class MyThread7b extends Thread {
 		this.outputServer = outputServer;
 	}
 
+	@Override
 	public void run() {
 		/* Interrupt-Flag abfragen */
 		while (!isInterrupted()) {

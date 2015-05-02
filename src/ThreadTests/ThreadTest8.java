@@ -74,7 +74,8 @@ class MyThread8a extends Thread {
     this.outputServer = outputServer;
   }
 
-  public void run() {
+  @Override
+public void run() {
     int i = 0;
     /* Interrupt-Flag abfragen */
     while (!isInterrupted()) {
@@ -92,7 +93,8 @@ class MyThread8b extends Thread {
     this.outputServer = outputServer;
   }
 
-  public void run() {
+  @Override
+public void run() {
     /* Interrupt-Flag abfragen */
     while (!isInterrupted()) {
       outputServer.showOutput("------------ Hallo! --------------");

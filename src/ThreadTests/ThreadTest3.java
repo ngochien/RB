@@ -25,7 +25,8 @@ public class ThreadTest3 {
 
 class MyThread3 extends Thread {
   /* Hochz�hlen und Zahlen ausgeben */
-  public void run() {
+  @Override
+public void run() {
     int i = 0;
     
     /* Interrupt-Flag abfragen */

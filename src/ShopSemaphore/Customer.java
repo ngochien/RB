@@ -14,6 +14,7 @@ public class Customer extends Thread {
 		currentShop = s;
 	}
 
+	@Override
 	public void run() {
 
 		while (!isInterrupted()) {

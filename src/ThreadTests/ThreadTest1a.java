@@ -29,7 +29,8 @@ public class ThreadTest1a {
 /* Eigene Klasse */
 class MyThreadZahl extends Thread {
   /* Hochz�hlen und Zahlen ausgeben */
-  public void run() {
+  @Override
+public void run() {
     for (int i = 0; i < 100; i++) {
       System.err.println(i);
     }
@@ -39,7 +40,8 @@ class MyThreadZahl extends Thread {
 /* Eigene Klasse */
 class MyThreadText extends Thread {
   /* Intelligenten Text ausgeben */
-  public void run() {
+  @Override
+public void run() {
     for (int i = 0; i < 100; i++) {
       System.err.println("------------ Ich bin auch noch da! ");
     }

@@ -1,0 +1,21 @@
+<?xml version='1.0'?>
+
+<!-- WEB SERVER META DATA -->
+<!-- Replace the title, date, and author with your values -->
+<webserver
+    title="Highly caffeinated webserver"
+    date="July 2006"
+    author="Greg Gagne"
+>
+
+<!-- DOCUMENT BASE -->
+<!-- Where we begin serving web pages from.
+Replace docBase with the name of the top-level directory where
+you will serve web pages -->
+<context docBase="/usr/local/webserver/"></context>
+
+<!-- LOG FILE -->
+<!-- The location of the log file -->
+<logfile log="/usr/local/logs/log.txt"></logfile> 
+
+</webserver>

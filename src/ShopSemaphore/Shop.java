@@ -7,7 +7,7 @@ package ShopSemaphore;
  Zweck: Stellt einen generischen Shop mit Zugriffsmethoden f�r Customer zur Verf�gung
  */
 
-import java.util.concurrent.*;
+import java.util.concurrent.Semaphore;
 
 public class Shop {
 	private static final int ANZAHL_KOERBE = 3;

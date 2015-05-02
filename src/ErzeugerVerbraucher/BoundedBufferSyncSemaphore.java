@@ -6,7 +6,7 @@ package ErzeugerVerbraucher;
  Zweck: Stellt einen generischen Datenpuffer mit Zugriffsmethoden und 
  Synchronisation �ber Semaphore zur Verf�gung
  */
-import java.util.*;
+import java.util.LinkedList;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -30,7 +30,8 @@ public class BoundedBufferSyncSemaphore<E> implements BoundedBuffer<E> {
   }
 
   /* Producer (Erzeuger) rufen die Methode ENTER auf */
-  public void enter(E item) {
+  @Override
+public void enter(E item) {
     try {
       // Versuche, die Anzahl freier Pl�tze zu erniedrigen. Falls auf Null
       // ==> Warten!
@@ -61,7 +62,8 @@ public class BoundedBufferSyncSemaphore<E> implements BoundedBuffer<E> {
   }
 
   /* Consumer (Verbraucher) rufen die Methode REMOVE auf */
-  public E remove() {
+  @Override
+public E remove() {
     E item;
     try {
       // Versuche, die Anzahl belegter Pl�tze zu erniedrigen. Falls auf

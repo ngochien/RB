@@ -6,7 +6,7 @@ package ErzeugerVerbraucher;
  Zweck: Stellt einen generischen Datenpuffer mit Zugriffsmethoden und 
  Synchronisation �ber Java-Monitor des Puffers zur Verf�gung 
  */
-import java.util.*;
+import java.util.LinkedList;
 
 public class BoundedBufferSyncMonitor<E> implements BoundedBuffer<E> {
 	/* Datenpuffer f�r Elemente vom Typ E mit Zugriffsmethoden enter und remove */
@@ -20,6 +20,7 @@ public class BoundedBufferSyncMonitor<E> implements BoundedBuffer<E> {
 	}
 
 	/* Producer (Erzeuger) rufen die Methode ENTER auf */
+	@Override
 	public synchronized void enter(E item) {
 		/*
 		 * Pufferzugriff sperren (bzw. ggf. auf Zugriff warten): geschieht
@@ -62,6 +63,7 @@ public class BoundedBufferSyncMonitor<E> implements BoundedBuffer<E> {
 	}
 
 	/* Consumer (Verbraucher) rufen die Methode REMOVE auf */
+	@Override
 	public synchronized E remove() {
 		/*
 		 * Pufferzugriff sperren (bzw. ggf. auf Zugriff warten): geschieht

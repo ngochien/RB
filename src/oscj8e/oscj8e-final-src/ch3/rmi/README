@@ -1,0 +1,43 @@
+
+Instructions for running RMI source code examples.
+--------------------------------------------------
+
+This is organized into three directories:
+
+(1) client - which contains the RMIClient code.
+
+(2) server - which contains the RemoteDate interface and implementation.
+
+To run the remote date  files
+
+SERVER
+------
+1. Compile all source files.
+
+2. Start the registry (rmiregistry)
+
+On UNIX/Linux/OS X, enter
+
+	rmiregistry &
+
+On Windows, enter
+
+	start rmiregistry
+
+4. Create the remote object 
+
+	java RemoteDateImpl
+
+This registers the remote date on the server with the RMI registry.
+
+CLIENT
+------
+
+*** Make sure the RemoteDate.class file is in the client directory!!!
+
+1. Compile RemoteDate.java
+
+2. Start the client
+
+	java RMIClient
+

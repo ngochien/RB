@@ -6,7 +6,8 @@ package ErzeugerVerbraucher;
  Zweck: Erzeugt eine Simulationsumgebung f�r ein Erzeuger/Verbrauchersystem
  */
 
-import java.util.*;
+import java.util.Date;
+import java.util.LinkedList;
 
 public class BoundedBufferServer {
   public final int NO_PRODUCER = 3; // Anzahl Erzeuger-Threads

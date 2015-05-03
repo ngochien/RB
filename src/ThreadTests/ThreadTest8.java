@@ -60,7 +60,7 @@ class OutputServer8 {
     } // V(dieses OutputServer8-Objekt)
   }
 
-  public synchronized void showThreadName() {
+  public void showThreadName() {
     /* Zeige aktuellen Threadnamen an */
     System.err.println("Output von " + Thread.currentThread().getName());
   }

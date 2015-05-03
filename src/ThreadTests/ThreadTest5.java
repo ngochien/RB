@@ -22,6 +22,7 @@ public class ThreadTest5 {
     /* Startzeit ermitteln */
     long startTime = System.nanoTime();
     try {
+        System.err.println("Name des ausgef�hrten Threads: " + Thread.currentThread().getName());
       /* main-Thread auf Ende des testThreads (Zielobjekt) warten lassen */
       testThread.join();
     } catch (InterruptedException e) {

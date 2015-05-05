@@ -16,7 +16,7 @@ public class Kunde extends Thread {
 	 */	
 	
 	private Verkaufsraum verkaufsraum;
-	
+	private Bestellung bestellung;
 	private int verweilszeit;
 	
 	public Kunde(Verkaufsraum verkaufsraum) {
@@ -32,6 +32,16 @@ public class Kunde extends Thread {
 	
 	public void setVerweilszeit(int verweilszeit) {
 		this.verweilszeit = verweilszeit;
+	}	
+	
+	public Bestellung getBestellung() {
+		return bestellung;
+	}
+
+	public void bestellen() {
+		bestellung = new Bestellung();
+		System.out.println("\t\t\t\t" + Thread.currentThread().getName()
+							+ " möchte " + bestellung.getAnzahl() + " Burger bestellen");						
 	}
 	
 	public void run() {
@@ -39,6 +49,22 @@ public class Kunde extends Thread {
 		verkaufsraum.betreten();
 		if (!isInterrupted()) {
 			verkaufsraum.sichEinreihen();
+			synchronized (this) {
+				try {
+//					System.out.println("\t\t\t\t" + Thread.currentThread().getName() + " wartet in der Warteschlange...");
+//					this.wait();
+					bestellen();
+					this.notify();					
+					this.wait();
+				} catch (Exception e) {
+					System.out.println(Thread.currentThread().getName() + " wurde beim Warten geweckt und haut ab");
+					Thread.currentThread().interrupt();
+					e.printStackTrace();
+					return;
+				}
+			}
+			
+			verkaufsraum.verlassen();
 		}
 		System.out.println(this.getName() + " wurde beendet");
 	}

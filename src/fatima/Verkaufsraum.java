@@ -48,11 +48,16 @@ public class Verkaufsraum {
 		}
 	}
 	
-	public void schliessen() throws InterruptedException {			
+	public void schliessen() {			
 		for (int i = 0; i < anzahlServiceKrafts; i++) {			
-			serviceKrafts[i].interrupt();
-			serviceKrafts[i].join();
+			try {
+				serviceKrafts[i].interrupt();			
+				serviceKrafts[i].join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}	
+		
 		for (int i = 0; i < anzahlKuecheKrafts; i++) {
 			kuecheKrafts[i] = null;
 		}
@@ -87,25 +92,47 @@ public class Verkaufsraum {
 			}			
 	}
 	
-	public Bestellung bestellen() {	
-		return new Bestellung();
+	public Bestellung bedienen(Warteschlange warteschlange) {
+		Thread naechsteThread = warteschlange.remove();		
+		Bestellung bestellung = null;
+		
+		if (naechsteThread instanceof Kunde) {
+			Kunde naechsteKunde = (Kunde) naechsteThread;
+			
+			synchronized (naechsteKunde) {
+				bestellung = naechsteKunde.getBestellung();
+				while (bestellung == null) {
+					try {
+//						naechsteKunde.notify();
+						System.out.println(Thread.currentThread().getName()+ " wartet auf Bestellung von " + naechsteKunde.getName());
+						naechsteKunde.wait();
+						bestellung = naechsteKunde.getBestellung();
+					} catch (InterruptedException e) {
+						System.out.println(Thread.currentThread().getName()+ " wurde beim Warten geweckt");
+						Thread.currentThread().interrupt();
+						e.printStackTrace();
+						return null;
+					}
+				}	
+				System.out.format("\t\t\t\t%s von %s wird angenommen... \n", bestellung.getId(), naechsteKunde.getName());
+				try {
+					Thread.sleep(bestellung.getDauer());
+				} catch (InterruptedException e) {
+					System.out.println(Thread.currentThread().getName()+ " wurde beim Schlafen geweckt");
+					Thread.currentThread().interrupt();
+					e.printStackTrace();
+				}
+				System.out.format("\t\t\t\t%s hat %d Burger bei %s bestellt und wartet nun... \n",
+						 naechsteKunde.getName(), bestellung.getAnzahl(), Thread.currentThread().getName());
+				
+			}				
+		}
+		return bestellung;
+		
 	}
 	
-	public void bedienen(Warteschlange warteschlange) {
-		Thread naechsteKunde = warteschlange.remove();
-		if (naechsteKunde != null) {
-			try {
-				System.out.println("\t\t\t\t" + naechsteKunde.getName()
-						+ " bestellt und wartet");
-				Thread.sleep(Utility.random(5000, 10000));
-			} catch (InterruptedException e) {
-				System.out.println(Thread.currentThread().getName()+ " wurde beim Schlafen geweckt");
-				Thread.currentThread().interrupt();
-				e.printStackTrace();
-			}
-
-			System.out.println(naechsteKunde.getName() + " ist fertig");
-		}
+	public void verlassen() {
+		System.out.println(Thread.currentThread().getName() + " ist fertig und verlasst das Lokal");
 		platz.release();
 	}
 }

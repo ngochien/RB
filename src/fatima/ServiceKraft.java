@@ -57,12 +57,7 @@ public class ServiceKraft extends Thread {
 	 */
 	void bestellungenErhoehen() {
 		
-	}
-	
-	void bedienen() {
-		// Die  Bestellungen  werden   an  die  Küche 
-		// weitergeleitet  und  nach  Einreichungszeitpunkt  abgearbeitet.  
-	}
+	}	
 	
 	void BurgerEntnehemen() {
 		System.out.println("Weiter können die Service-Kräfte die Burger	nur in der Folge entnehmen,	wie	die	Burger auf das Lieferband gestellt worden sind (Queue).");

@@ -13,27 +13,39 @@ public class Verkaufsraum {
 	
 	private Semaphore platz;
 	
+	private int abgewieseneKunden;
+	
 	public Verkaufsraum(int anzahlPlatz) {
 		platz = new Semaphore(anzahlPlatz);
 	}
 	
-	public void betreten() {
+	public void betreten() {		
 		if (platz.tryAcquire() == true) {
 			
 			System.out.println(Thread.currentThread().getName() + " geht rein");
 			try {
-				System.out.println(Thread.currentThread().getName() + " bestellt und wartet");
+				System.out.println("\t\t\t\t" + Thread.currentThread().getName() + " bestellt und wartet");
 				Thread.sleep(Utility.random(5000, 9000));
 			} catch (InterruptedException e) {
 				Thread.currentThread().interrupt();
 				e.printStackTrace();
 			}
 			
-			System.out.println(Thread.currentThread().getName() + " ist fertig");
+			System.out.println("\t\t\t\t" + Thread.currentThread().getName() + " ist fertig");
 			platz.release();
 		} else {
+			abgewieseneKunden++;
 			System.out.println(Thread.currentThread().getName() + " geht weg");
-			Thread.currentThread().interrupt();
+//			Thread.currentThread().interrupt();			
 		}
+	}
+	
+	/**
+	 * Liefert die Anzahl der bisher abgewiesenen Kunden zurück.
+	 * 
+	 * @return
+	 */
+	public int getAbgewieseneKunden() {		
+		return abgewieseneKunden;
 	}
 }

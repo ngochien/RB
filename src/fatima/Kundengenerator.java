@@ -31,31 +31,29 @@ public class Kundengenerator extends Thread {
 	}
 
 	public void run() {
+		int rundeNr = 0;
 		while (!isInterrupted()) {
-			generieren();
+			rundeNr++;
+			generieren(rundeNr);
 		}
-		System.out.println(Thread.currentThread().getName() + " wurde beendet");
+		System.out.println(Thread.currentThread().getName() + " wurde beendet. "
+				+ "Es kommen keine Kunden mehr. Nur noch aktuelle Kunden werden fertig bedient");
 	}
 	
-	public void generieren() {
+	public void generieren(int rundeNr) {
 		int anzahlKunden = Utility.random(min, max);
-		List<Kunde> kunden = new LinkedList<Kunde>();
 		for (int i = 1; i <= anzahlKunden; i++) {
 			Kunde k = new Kunde(verkaufsraum);
-			k.setName("Kunde " + i);
-			kunden.add(k);
+			k.setName("Kunde " + i + " (Runde " + rundeNr + ")");
 			k.start();
 		}
 		try {
 			Thread.sleep(zeitraum);
-			System.out.println("---------------NÄCHSTE RUNDE---------------");
+			System.out.println("Abgewiesene Kunden: " + verkaufsraum.getAbgewieseneKunden());
+			System.out.println("--------------------NÄCHSTE RUNDE--------------------");
 		} catch (InterruptedException e) {
 			System.out.println(Thread.currentThread().getName() + " wurde geweckt");
-			Thread.currentThread().interrupt();
-			for (Kunde k : kunden) {
-				k.interrupt();
-			}
-			e.printStackTrace();
+			Thread.currentThread().interrupt();			
 		}
 	}
 }

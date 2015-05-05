@@ -21,16 +21,7 @@ public class Utility {
 		return (int) (Math.random() * min + Math.random() * (max - min)) + 1;
 	}
 
-	/**
-	 * Liefert die Anzahl der bisher abgewiesenen Kunden zurück.
-	 * 
-	 * @return
-	 */
-	int getAbgewieseneKunden() {
-		System.out
-				.println("Abgewiesene Kunden sind kumulativ zu protokollieren.");
-		return 0;
-	}
+	
 
 	/**
 	 * Liefert die Länge der angegebene Warteschlange zurück.

@@ -7,7 +7,7 @@ package fatima;
  * @author le
  *
  */
-public class Kunde {
+public class Kunde extends Thread {
 
 	/**
 	 * Die Zeit, die der Kunde nach dem Erhalt der Ware braucht, bis er das Lokal verlassen hat.
@@ -15,7 +15,13 @@ public class Kunde {
 	static final int MIN_ZEIT_ZU_VERLASSEN = 10;
 	static final int MAX_ZEIT_ZU_VERLASSEN = 20;
 	
-	int verweilszeit;
+	private Verkaufsraum verkaufsraum;
+	
+	private int verweilszeit;
+	
+	public Kunde(Verkaufsraum verkaufsraum) {
+		this.verkaufsraum = verkaufsraum;
+	}
 	
 	public int getVerweilszeit() {
 		return verweilszeit;
@@ -25,8 +31,9 @@ public class Kunde {
 		this.verweilszeit = verweilszeit;
 	}
 	
-	public Kunde() {
-		// TODO Auto-generated constructor stub
+	public void run() {
+		System.out.println(this.getName() + " kommt");
+		verkaufsraum.betreten();
 	}
 	
 	void bestellen() {

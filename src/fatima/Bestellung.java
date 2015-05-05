@@ -9,16 +9,19 @@ package fatima;
  */
 public class Bestellung {
 
-	static final int MIN_BURGER = 1;
-	static final int MAX_BURGER = 8;
+	/**
+	 * Ein Kunde bestellt zufällig verteilt zwischen 1 und 8 Burger. 
+	 */
+	private static final int MIN_BESTELLUNG = 1;
+	private static final int MAX_BESTELLUNG = 8;
 	
-	private int anzahlBurger;
+	private int anzahl;
 	
 	public Bestellung() {
-		anzahlBurger = Utility.random(MIN_BURGER, MAX_BURGER);
+		anzahl = Utility.random(MIN_BESTELLUNG, MAX_BESTELLUNG);
 	}
 	
-	int getAnzahlBurger() {
-		return anzahlBurger;
+	public int getAnzahl() {
+		return anzahl;
 	}
 }

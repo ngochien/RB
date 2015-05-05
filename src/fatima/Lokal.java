@@ -19,29 +19,29 @@ public class Lokal {
 	
 	public static final int ANZAHL_SERVICE_KRAFT = 2;
 	public static final int ANZAHL_KUECHE_KRAFT = 3;
-	public static final int ANZAHL_WARTESCHLANGEN = ANZAHL_SERVICE_KRAFT;
-	
 	
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		Verkaufsraum verkaufsraum = new Verkaufsraum(ANZAHL_PLATZ, ANZAHL_WARTESCHLANGEN);
+		Verkaufsraum verkaufsraum = new Verkaufsraum(ANZAHL_PLATZ, ANZAHL_SERVICE_KRAFT, ANZAHL_KUECHE_KRAFT);
 		Kundengenerator generator = new Kundengenerator(verkaufsraum, ZEITRAUM, MIN_ANZAHL_KUNDEN, MAX_ANZAHL_KUNDEN);
 		generator.setName("Kundengenerator");
 		
 		System.out.println("-------------------------START------------------------");
 		
+		verkaufsraum.oeffnen();
 		generator.start();
 		
 		try {
 			Thread.sleep(SIMULATION_ZEIT);
 			generator.interrupt();
 			generator.join();
+			verkaufsraum.schliessen();
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}			
 		
 		System.out.println("-------------------------THE END------------------------");
 	}

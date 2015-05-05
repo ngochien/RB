@@ -7,24 +7,37 @@ package fatima;
  * @author le
  *
  */
-public class ServiceKraft {
+public class ServiceKraft extends Thread {
 
+	private static int zaehler = 0;
+	
 	/**
 	 * Die Annahme der Bestellung dauert zufällig zwischen 10 und 5 Sekunden. 
 	 */
-	static final int MIN_BEDIENUNGSZEIT = 5;
-	static final int MAX_BEDIENUNGSZEIT = 10;
+	private static final int MIN_BEDIENUNGSDAUER = 5;
+	private static final int MAX_BEDIENUNGSDAUER = 10;	
 	
-	private String name;
+	private Verkaufsraum verkaufsraum;
+	private Warteschlange warteschlange;
+		
+	public ServiceKraft(Verkaufsraum verkaufsraum, Warteschlange warteschlange) {
+		zaehler++;		
+		this.setName("ServiceKraft-" + zaehler);
+		this.verkaufsraum = verkaufsraum;
+		this.warteschlange = warteschlange;
+	}
+	
+	public void run() {
+		while (!isInterrupted()) {
+			verkaufsraum.bedienen(warteschlange);
+		}
+		System.out.println(this.getName() + " wurde beendet");
+	}
 	
 	/**
 	 * Die Anzahl der angenommenen Bestellungen
 	 */
 	private int bestellungen;
-	
-	public String getName() {
-		return name;
-	}
 	
 	/**
 	 * Liefert die Anzahl der angenommenen Bestellungen zurück.
@@ -36,7 +49,7 @@ public class ServiceKraft {
 	}
 	
 	int getBedienungzeit() {
-		return Utility.random(MIN_BEDIENUNGSZEIT, MAX_BEDIENUNGSZEIT);
+		return Utility.random(MIN_BEDIENUNGSDAUER, MAX_BEDIENUNGSDAUER);
 	}
 	
 	/**
@@ -47,7 +60,6 @@ public class ServiceKraft {
 	}
 	
 	void bedienen() {
-		// TODO
 		// Die  Bestellungen  werden   an  die  Küche 
 		// weitergeleitet  und  nach  Einreichungszeitpunkt  abgearbeitet.  
 	}

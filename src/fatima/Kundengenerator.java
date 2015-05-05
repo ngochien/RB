@@ -44,9 +44,8 @@ public class Kundengenerator extends Thread {
 			System.out.println("Abgewiesene Kunden: " + verkaufsraum.getAbgewieseneKunden());
 			System.out.println("\n--------------------NÄCHSTE RUNDE--------------------\n");
 		} catch (InterruptedException e) {
-			System.out.println(Thread.currentThread().getName() + " wurde geweckt");
-			Thread.currentThread().interrupt();	
-			e.printStackTrace();
+			System.out.println(Thread.currentThread().getName() + " wurde beim Schlafen geweckt");
+			Thread.currentThread().interrupt();				
 		}
 	}
 }

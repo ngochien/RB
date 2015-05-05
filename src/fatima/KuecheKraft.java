@@ -16,6 +16,11 @@ public class KuecheKraft {
 	static final int MIN_ZUBEREITUNGSZEIT = 10;
 	static final int MAX_ZUBEREITUNGSZEIT = 20;
 
+	
+	public KuecheKraft() {
+		// TODO Auto-generated constructor stub
+	}
+	
 	int getZubereitungszeit() {
 		return Utility.random(MIN_ZUBEREITUNGSZEIT, MAX_ZUBEREITUNGSZEIT);
 	}

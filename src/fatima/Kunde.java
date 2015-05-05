@@ -9,6 +9,8 @@ package fatima;
  */
 public class Kunde extends Thread {
 
+	private static int zaehler = 0;	
+	
 	/**
 	 * Die Zeit, die der Kunde nach dem Erhalt der Ware braucht, bis er das Lokal verlassen hat.
 	 */
@@ -20,7 +22,10 @@ public class Kunde extends Thread {
 	private int verweilszeit;
 	
 	public Kunde(Verkaufsraum verkaufsraum) {
+		zaehler++;
 		this.verkaufsraum = verkaufsraum;
+		this.setName("Kunde " + zaehler);
+		
 	}
 	
 	public int getVerweilszeit() {
@@ -32,8 +37,12 @@ public class Kunde extends Thread {
 	}
 	
 	public void run() {
-		System.out.println(this.getName() + " kommt");
+		System.out.println(Thread.currentThread().getName() + " kommt");
 		verkaufsraum.betreten();
+		if (!isInterrupted()) {
+			verkaufsraum.sichEinreihen();
+		}
+		System.out.println(this.getName() + " wurde beendet");
 	}
 	
 	void bestellen() {

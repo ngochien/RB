@@ -1,10 +1,4 @@
-/**
- * 
- */
 package fatima;
-
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Diese Klasse generiert für einen angegebenen Zeitraum eine zufällige Anzahl von Kunden
@@ -30,30 +24,29 @@ public class Kundengenerator extends Thread {
 		this.max = max;
 	}
 
-	public void run() {
-		int rundeNr = 0;
-		while (!isInterrupted()) {
-			rundeNr++;
-			generieren(rundeNr);
+	public void run() {		
+		while (!isInterrupted()) {			
+			generieren();
 		}
 		System.out.println(Thread.currentThread().getName() + " wurde beendet. "
 				+ "Es kommen keine Kunden mehr. Nur noch aktuelle Kunden werden fertig bedient");
 	}
 	
-	public void generieren(int rundeNr) {
+	public void generieren() {
 		int anzahlKunden = Utility.random(min, max);
+		System.out.println("\t\t" + anzahlKunden + " Kunden wurden generiert");
 		for (int i = 1; i <= anzahlKunden; i++) {
-			Kunde k = new Kunde(verkaufsraum);
-			k.setName("Kunde " + i + " (Runde " + rundeNr + ")");
+			Kunde k = new Kunde(verkaufsraum);			
 			k.start();
 		}
 		try {
 			Thread.sleep(zeitraum);
 			System.out.println("Abgewiesene Kunden: " + verkaufsraum.getAbgewieseneKunden());
-			System.out.println("--------------------NÄCHSTE RUNDE--------------------");
+			System.out.println("\n--------------------NÄCHSTE RUNDE--------------------\n");
 		} catch (InterruptedException e) {
 			System.out.println(Thread.currentThread().getName() + " wurde geweckt");
-			Thread.currentThread().interrupt();			
+			Thread.currentThread().interrupt();	
+			e.printStackTrace();
 		}
 	}
 }

@@ -19,44 +19,53 @@ public class ServiceKraft extends Thread {
 	
 	private Verkaufsraum verkaufsraum;
 	private Warteschlange warteschlange;
+	
+	private ServiceKraft kollege;
 		
 	public ServiceKraft(Verkaufsraum verkaufsraum, Warteschlange warteschlange) {
 		zaehler++;		
 		this.setName("ServiceKraft-" + zaehler);
 		this.verkaufsraum = verkaufsraum;
-		this.warteschlange = warteschlange;
+		this.warteschlange = warteschlange;		
+	}
+	
+	public void setKollege(ServiceKraft kollege) {
+		this.kollege = kollege;
 	}
 	
 	public void run() {
 		while (!isInterrupted()) {
-			verkaufsraum.bedienen(warteschlange);
+			if (verkaufsraum.bedienen(warteschlange) != null) {
+				anzahlBestellungen++;
+				System.out.format("\t\t\t\t%s hat bis jetzt %d Bestellungen angenommen\n\n",
+								Thread.currentThread().getName(), anzahlBestellungen);
+				if (kollege.anzahlBestellungen - this.anzahlBestellungen >= 3) {
+					System.err.format("----------PRIORITÄT FÜR %s----------\n\n", Thread.currentThread().getName());
+					Thread.currentThread().setPriority(MAX_PRIORITY);
+				} else {
+					Thread.currentThread().setPriority(NORM_PRIORITY);
+				}
+			}
 		}
-		System.out.println(this.getName() + " wurde beendet");
+		System.out.println(Thread.currentThread().getName() + " wurde beendet");
 	}
 	
 	/**
 	 * Die Anzahl der angenommenen Bestellungen
 	 */
-	private int bestellungen;
+	private int anzahlBestellungen;
 	
 	/**
 	 * Liefert die Anzahl der angenommenen Bestellungen zurück.
 	 * 
 	 * @return
 	 */
-	public int getBestellungen() {
-		return 0;
+	public int getAnzahlBestellungen() {
+		return anzahlBestellungen;
 	}
 	
 	int getBedienungzeit() {
 		return Utility.random(MIN_BEDIENUNGSDAUER, MAX_BEDIENUNGSDAUER);
-	}
-	
-	/**
-	 * Erhöht die Anzahl der bisher angenommenen Bestellungen. 
-	 */
-	void bestellungenErhoehen() {
-		
 	}	
 	
 	void BurgerEntnehemen() {

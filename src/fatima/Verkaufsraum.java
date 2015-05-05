@@ -36,10 +36,13 @@ public class Verkaufsraum {
 				
 		for (int i = 0; i < anzahlWarteschlangen; i++) {
 			warteschlangen[i] = new Warteschlange();
-		}
-		
-		for (int i = 0; i < anzahlServiceKrafts; i++) {
 			serviceKrafts[i] = new ServiceKraft(this, warteschlangen[i]);
+		}		
+		
+		for (int i = 0; i < anzahlServiceKrafts; i++) {	
+			int kollege = i + 1;
+			kollege = (kollege == anzahlServiceKrafts) ? 0 : kollege;
+			serviceKrafts[i].setKollege(serviceKrafts[kollege]);			
 			serviceKrafts[i].start();
 		}
 		
@@ -104,7 +107,7 @@ public class Verkaufsraum {
 				while (bestellung == null) {
 					try {
 //						naechsteKunde.notify();
-						System.out.println(Thread.currentThread().getName()+ " wartet auf Bestellung von " + naechsteKunde.getName());
+						System.out.println(Thread.currentThread().getName() + " wartet auf Bestellung von " + naechsteKunde.getName());
 						naechsteKunde.wait();
 						bestellung = naechsteKunde.getBestellung();
 					} catch (InterruptedException e) {
@@ -114,7 +117,7 @@ public class Verkaufsraum {
 						return null;
 					}
 				}	
-				System.out.format("\t\t\t\t%s von %s wird angenommen... \n", bestellung.getId(), naechsteKunde.getName());
+				System.out.format("\t\t\t\t%s von %s wird angenommen... \n\n", bestellung.getId(), naechsteKunde.getName());
 				try {
 					Thread.sleep(bestellung.getDauer());
 				} catch (InterruptedException e) {
@@ -122,7 +125,7 @@ public class Verkaufsraum {
 					Thread.currentThread().interrupt();
 					e.printStackTrace();
 				}
-				System.out.format("\t\t\t\t%s hat %d Burger bei %s bestellt und wartet nun... \n",
+				System.out.format("%s hat %d Burger bei %s bestellt und wartet nun... \n\n",
 						 naechsteKunde.getName(), bestellung.getAnzahl(), Thread.currentThread().getName());
 				
 			}				

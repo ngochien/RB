@@ -40,8 +40,8 @@ public class Kunde extends Thread {
 
 	public void bestellen() {
 		bestellung = new Bestellung();
-		System.out.println("\t\t\t\t" + Thread.currentThread().getName()
-							+ " möchte " + bestellung.getAnzahl() + " Burger bestellen");						
+		System.out.println(Thread.currentThread().getName()
+						+ " möchte " + bestellung.getAnzahl() + " Burger bestellen");						
 	}
 	
 	public void run() {

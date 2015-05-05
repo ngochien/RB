@@ -44,13 +44,13 @@ public class Kundengenerator extends Thread {
 			}
 		}
 		
-		System.out.println(Thread.currentThread().getName() + " wurde beendet. "
+		System.err.println(Thread.currentThread().getName() + " wurde beendet. "
 				+ "Es kommen keine Kunden mehr. Nur noch aktuelle Kunden werden fertig bedient");
 	}
 	
 	public void generieren() {
 		int anzahlKunden = Utility.random(min, max);
-		System.out.println("\t\t" + anzahlKunden + " Kunden wurden generiert");
+		System.out.println("\t\t" + anzahlKunden + " Kunde(n) wurden generiert");
 		for (int i = 1; i <= anzahlKunden; i++) {
 			Kunde k = new Kunde(verkaufsraum);
 			kunden.add(k);

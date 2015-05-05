@@ -31,8 +31,8 @@ public class Warteschlange implements Puffer<Thread> {
 		
 		/* Item zum Puffer hinzufügen */
 		threads.add(thread);
-		System.out.format("\t\t\t\t" + Thread.currentThread().getName() + " geht in die "
-						+ " Warteschlange-%d: %d Kunde(n) da \n", id, threads.size());
+		System.out.format(Thread.currentThread().getName() + " geht in die "
+						+ " Warteschlange-%d: %d Kunde(n) da \n\n", id, threads.size());
 
 		/*
 		 * Wartenden Consumer wecken --> es müssen ALLE Threads geweckt werden

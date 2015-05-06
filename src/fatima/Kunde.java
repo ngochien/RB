@@ -51,8 +51,8 @@ public class Kunde extends Thread {
 			verkaufsraum.sichEinreihen();
 			synchronized (this) {
 				try {
-//					System.out.println("\t\t\t\t" + Thread.currentThread().getName() + " wartet in der Warteschlange...");
-//					this.wait();
+					System.out.println(Thread.currentThread().getName() + " wartet in der Warteschlange...");
+					this.wait();
 					bestellen();
 					this.notify();					
 					this.wait();

@@ -45,10 +45,10 @@ public class Kunde extends Thread {
 	}
 	
 	public void run() {
-		System.out.println(Thread.currentThread().getName() + " kommt");
+		System.out.println(Thread.currentThread().getName() + " KOMMT ");
 		verkaufsraum.betreten();
 		if (!isInterrupted()) {
-			verkaufsraum.sichEinreihen();
+			sichEinreihen(verkaufsraum.getAktuelleWarteschlange());
 			synchronized (this) {
 				try {
 					System.out.println(Thread.currentThread().getName() + " wartet in der Warteschlange...");
@@ -69,6 +69,9 @@ public class Kunde extends Thread {
 		System.out.println(this.getName() + " wurde beendet");
 	}
 		
+	public void sichEinreihen(Warteschlange warteschlange) {
+		warteschlange.enter(this);
+	}
 	
 	void bezahlen() {
 		System.out.println("Der Kunde zahlt erst, wenn er die Ware vollständig sieht.");

@@ -12,7 +12,7 @@ public class Verkaufsraum {
 
 	private int anzahlWarteschlangen;
 	private Warteschlange[] warteschlangen;
-	private int aktuelleWarteschlange = 0;
+	private int aktuelleWarteschlange;
 	
 	private int anzahlServiceKrafts;
 	private ServiceKraft[] serviceKrafts;
@@ -68,12 +68,12 @@ public class Verkaufsraum {
 
 	public void betreten() {		
 		if (platz.tryAcquire() == true) {
-			System.out.println(Thread.currentThread().getName() + " geht rein");						
+			System.out.println(Thread.currentThread().getName() + " BETRITT den Verkaufsraum");						
 		} else {
 			synchronized (this) {
 				abgewieseneKunden++;
 			}
-			System.out.println(Thread.currentThread().getName() + " geht weg");
+			System.out.println(Thread.currentThread().getName() + " GEHT WEG");
 			Thread.currentThread().interrupt();
 		}
 	}
@@ -87,13 +87,21 @@ public class Verkaufsraum {
 		return abgewieseneKunden;
 	}
 
-	public synchronized void sichEinreihen() {		
-			warteschlangen[aktuelleWarteschlange].enter(Thread.currentThread());
-			aktuelleWarteschlange++;
-			if (aktuelleWarteschlange >= anzahlWarteschlangen) {
-				aktuelleWarteschlange = 0;
-			}			
+	public synchronized Warteschlange getAktuelleWarteschlange() {
+		aktuelleWarteschlange++;
+		if (aktuelleWarteschlange >= anzahlWarteschlangen) {
+			aktuelleWarteschlange = 0;
+		}
+		return warteschlangen[aktuelleWarteschlange];
 	}
+	
+//	public synchronized void sichEinreihen() {		
+//			warteschlangen[aktuelleWarteschlange].enter(Thread.currentThread());
+//			aktuelleWarteschlange++;
+//			if (aktuelleWarteschlange >= anzahlWarteschlangen) {
+//				aktuelleWarteschlange = 0;
+//			}			
+//	}
 	
 	public Bestellung bedienen(Warteschlange warteschlange) {
 		Thread naechsteThread = warteschlange.remove();		

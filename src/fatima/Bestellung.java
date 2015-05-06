@@ -15,8 +15,8 @@ public class Bestellung {
 	private static final int MIN_BESTELLUNG = 1;
 	private static final int MAX_BESTELLUNG = 8;
 	
-	private static final int MIN_BESTELLUNGSDAUER = 5 * 1000;
-	private static final int MAX_BESTELLUNGSDAUER = 10 * 1000;	
+	private static final int MIN_BESTELLUNGSDAUER = 1 * 1000;
+	private static final int MAX_BESTELLUNGSDAUER = 1 * 1000;	
 	
 	private static int zaehler = 0;
 	private String id;

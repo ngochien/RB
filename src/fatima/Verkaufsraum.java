@@ -36,7 +36,7 @@ public class Verkaufsraum {
 				
 		for (int i = 0; i < anzahlWarteschlangen; i++) {
 			warteschlangen[i] = new Warteschlange();
-			serviceKrafts[i] = new ServiceKraft(this, warteschlangen[i]);
+			serviceKrafts[i] = new ServiceKraft(warteschlangen[i]);
 		}		
 		
 		for (int i = 0; i < anzahlServiceKrafts; i++) {	
@@ -93,53 +93,6 @@ public class Verkaufsraum {
 			aktuelleWarteschlange = 0;
 		}
 		return warteschlangen[aktuelleWarteschlange];
-	}
-	
-//	public synchronized void sichEinreihen() {		
-//			warteschlangen[aktuelleWarteschlange].enter(Thread.currentThread());
-//			aktuelleWarteschlange++;
-//			if (aktuelleWarteschlange >= anzahlWarteschlangen) {
-//				aktuelleWarteschlange = 0;
-//			}			
-//	}
-	
-	public Bestellung bedienen(Warteschlange warteschlange) {
-		Thread naechsteThread = warteschlange.remove();		
-		Bestellung bestellung = null;
-		
-		if (naechsteThread instanceof Kunde) {
-			Kunde naechsteKunde = (Kunde) naechsteThread;
-			
-			synchronized (naechsteKunde) {
-				bestellung = naechsteKunde.getBestellung();
-				while (bestellung == null) {
-					try {
-//						naechsteKunde.notify();
-						System.out.println(Thread.currentThread().getName() + " wartet auf Bestellung von " + naechsteKunde.getName());
-						naechsteKunde.wait();
-						bestellung = naechsteKunde.getBestellung();
-					} catch (InterruptedException e) {
-						System.out.println(Thread.currentThread().getName()+ " wurde beim Warten geweckt");
-						Thread.currentThread().interrupt();
-						e.printStackTrace();
-						return null;
-					}
-				}	
-				System.out.format("\t\t\t\t%s von %s wird angenommen... \n\n", bestellung.getId(), naechsteKunde.getName());
-				try {
-					Thread.sleep(bestellung.getDauer());
-				} catch (InterruptedException e) {
-					System.out.println(Thread.currentThread().getName()+ " wurde beim Schlafen geweckt");
-					Thread.currentThread().interrupt();
-					e.printStackTrace();
-				}
-				System.out.format("%s hat %d Burger bei %s bestellt und wartet nun... \n\n",
-						 naechsteKunde.getName(), bestellung.getAnzahl(), Thread.currentThread().getName());
-				
-			}				
-		}
-		return bestellung;
-		
 	}
 	
 	public void verlassen() {

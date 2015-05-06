@@ -40,24 +40,22 @@ public class Kunde extends Thread {
 
 	public void bestellen() {
 		bestellung = new Bestellung();
-		System.out.println(Thread.currentThread().getName()
-						+ " möchte " + bestellung.getAnzahl() + " Burger bestellen");						
+		System.out.println(Thread.currentThread().getName() + " BESTELLT gerade " + bestellung.getAnzahl() + " Burger...");						
 	}
 	
 	public void run() {
 		System.out.println(Thread.currentThread().getName() + " KOMMT ");
 		verkaufsraum.betreten();
-		if (!isInterrupted()) {
-			sichEinreihen(verkaufsraum.getAktuelleWarteschlange());
+		if (!isInterrupted()) {			
 			synchronized (this) {
 				try {
-					System.out.println(Thread.currentThread().getName() + " wartet in der Warteschlange...");
+					sichEinreihen(verkaufsraum.getAktuelleWarteschlange());
 					this.wait();
 					bestellen();
 					this.notify();					
 					this.wait();
 				} catch (Exception e) {
-					System.out.println(Thread.currentThread().getName() + " wurde beim Warten geweckt und haut ab");
+					System.err.println(Thread.currentThread().getName() + " WURDE beim Warten GEWECKT und HAUT AB");
 					Thread.currentThread().interrupt();
 					e.printStackTrace();
 					return;
@@ -66,11 +64,11 @@ public class Kunde extends Thread {
 			
 			verkaufsraum.verlassen();
 		}
-		System.out.println(this.getName() + " wurde beendet");
+		System.out.println(Thread.currentThread().getName() + " WURDE BEENDET");
 	}
 		
 	public void sichEinreihen(Warteschlange warteschlange) {
-		warteschlange.enter(this);
+		warteschlange.enter(this);		
 	}
 	
 	void bezahlen() {

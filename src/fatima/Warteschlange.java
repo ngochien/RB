@@ -24,22 +24,22 @@ public class Warteschlange implements Puffer<Kunde> {
 		kunden = new LinkedList<Kunde>();
 		zaehler++;
 		id = zaehler;
-	}
-
+	}	
+	
 	@Override
 	public synchronized void enter(Kunde kunde) {
 		
 		/* Item zum Puffer hinzufügen */
 		kunden.add(kunde);
-		System.out.format(Thread.currentThread().getName() + " ENTER "
+		System.out.format("\t\t\t\t" + Thread.currentThread().getName() + " ENTER "
 						+ " Warteschlange-%d: %d Kunde(n) da \n", id, kunden.size());
-
+		
 		/*
 		 * Wartenden Consumer wecken --> es müssen ALLE Threads geweckt werden
 		 * (evtl. auch andere Producer), da es nur eine Wait-Queue gibt!
 		 */
-		this.notifyAll();
-
+		this.notifyAll();		
+		
 		/*
 		 * Pufferzugriff entsperren und ggf. Threads in Monitor-Queue wecken:
 		 * geschieht automatisch durch Monitor-Austritt
@@ -58,7 +58,7 @@ public class Warteschlange implements Puffer<Kunde> {
 		/* Solange Puffer leer ==> warten! */
 		while (kunden.size() == 0) {
 			try {
-				System.out.println(Thread.currentThread().getName() + " wartet auf Kunde");
+				System.out.println(Thread.currentThread().getName() + " wartet auf Kunde\n");
 				this.wait(); // --> Warten in der Wait-Queue und Monitor des Puffers freigeben
 			} catch (InterruptedException e) {
 				/*

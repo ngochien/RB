@@ -17,15 +17,15 @@ public class ServiceKraft extends Thread {
 	private static final int MIN_BEDIENUNGSDAUER = 5;
 	private static final int MAX_BEDIENUNGSDAUER = 10;	
 	
-	private Verkaufsraum verkaufsraum;
+//	private Verkaufsraum verkaufsraum;
 	private Warteschlange warteschlange;
 	
 	private ServiceKraft kollege;
 		
-	public ServiceKraft(Verkaufsraum verkaufsraum, Warteschlange warteschlange) {
+	public ServiceKraft(Warteschlange warteschlange) {
 		zaehler++;		
 		this.setName("ServiceKraft-" + zaehler);
-		this.verkaufsraum = verkaufsraum;
+//		this.verkaufsraum = verkaufsraum;
 		this.warteschlange = warteschlange;		
 	}
 	
@@ -35,19 +35,19 @@ public class ServiceKraft extends Thread {
 	
 	public void run() {
 		while (!isInterrupted()) {
-			if (verkaufsraum.bedienen(warteschlange) != null) {
-				anzahlBestellungen++;
-				System.out.format("\t\t\t\t%s hat bis jetzt %d Bestellungen angenommen\n\n",
-								Thread.currentThread().getName(), anzahlBestellungen);
-				if (kollege.anzahlBestellungen - this.anzahlBestellungen >= 3) {
-					System.err.format("----------PRIORITÄT FÜR %s----------\n\n", Thread.currentThread().getName());
+			if (bedienen(warteschlange) != null) {
+				erhoeheAnzahlBestellungen();
+				System.out.format("\t\t\t\t%s hat bis jetzt %d Bestellungen ANGENOMMEN\n\n",
+								Thread.currentThread().getName(), getAnzahlBestellungen());
+				if (kollege.getAnzahlBestellungen() - this.getAnzahlBestellungen() >= 3) {
+					System.err.format("\n----------PRIORITÄT FÜR %s----------\n\n", Thread.currentThread().getName());
 					Thread.currentThread().setPriority(MAX_PRIORITY);
 				} else {
 					Thread.currentThread().setPriority(NORM_PRIORITY);
 				}
 			}
 		}
-		System.out.println(Thread.currentThread().getName() + " wurde beendet");
+		System.out.println(Thread.currentThread().getName() + " WURDE BEENDET");
 	}
 	
 	/**
@@ -60,8 +60,42 @@ public class ServiceKraft extends Thread {
 	 * 
 	 * @return
 	 */
-	public int getAnzahlBestellungen() {
+	public synchronized int getAnzahlBestellungen() {
 		return anzahlBestellungen;
+	}
+	
+	public synchronized void erhoeheAnzahlBestellungen() {
+		anzahlBestellungen++;
+	}
+	
+	public Bestellung bedienen(Warteschlange warteschlange) {
+		Kunde naechsteKunde = warteschlange.remove();
+		Bestellung bestellung = null;
+		synchronized (naechsteKunde) {
+			naechsteKunde.notify();
+			try {
+				while (naechsteKunde.getBestellung() == null) {
+					System.out.println("\t\t\t\t" + Thread.currentThread().getName()
+									+ " WARTET auf Bestellung von " + naechsteKunde.getName());
+					naechsteKunde.wait();
+				}
+				bestellung = naechsteKunde.getBestellung();
+				
+				System.out.format("\t\t\t\t%s NIMMT gerade %s von %s AN...\n",
+				Thread.currentThread().getName(), bestellung.getId(), naechsteKunde.getName());
+				
+				Thread.sleep(bestellung.getDauer());
+				
+				System.out.format("\t\t\t\t%s HAT %d Burger bei %s BESTELLT und WARTET nun...\n\n",
+				naechsteKunde.getName(), bestellung.getAnzahl(), Thread.currentThread().getName());
+			} catch (InterruptedException e) {
+				System.err.println(Thread.currentThread().getName() + " WURDE GEWECKT");
+				Thread.currentThread().interrupt();
+				e.printStackTrace();
+				return null;
+			}
+		}						
+		return bestellung;
 	}
 	
 	int getBedienungzeit() {

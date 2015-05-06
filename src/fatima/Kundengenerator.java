@@ -49,7 +49,7 @@ public class Kundengenerator extends Thread {
 	
 	public void generieren() {
 		int anzahlKunden = Utility.random(min, max);
-		System.out.println("\t\t" + anzahlKunden + " Kunde(n) wurden generiert");
+		System.out.println("\t\t" + anzahlKunden + " Kunde(n) wurden generiert\n");
 		for (int i = 1; i <= anzahlKunden; i++) {
 			Kunde k = new Kunde(verkaufsraum);
 			kunden.add(k);
@@ -57,11 +57,11 @@ public class Kundengenerator extends Thread {
 		}
 		try {
 			Thread.sleep(zeitraum);
-			System.out.println("Abgewiesene Kunden: " + verkaufsraum.getAbgewieseneKunden());
-			System.out.println("\n--------------------NÄCHSTE RUNDE--------------------\n");
+			System.out.println("\nAbgewiesene Kunden: " + verkaufsraum.getAbgewieseneKunden());
+			System.out.println("--------------------NÄCHSTE RUNDE--------------------\n");
 		} catch (InterruptedException e) {
-			System.out.println(Thread.currentThread().getName() + " wurde beim Schlafen geweckt");
-			System.out.println("Abgewiesene Kunden: " + verkaufsraum.getAbgewieseneKunden());
+			System.err.println(Thread.currentThread().getName() + " wurde beim Schlafen geweckt");
+			System.out.println("\nAbgewiesene Kunden: " + verkaufsraum.getAbgewieseneKunden());
 			Thread.currentThread().interrupt();				
 		}
 	}

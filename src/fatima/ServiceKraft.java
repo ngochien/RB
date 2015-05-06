@@ -11,22 +11,19 @@ public class ServiceKraft extends Thread {
 
 	private static int zaehler = 0;
 	
-	/**
-	 * Die Annahme der Bestellung dauert zufällig zwischen 10 und 5 Sekunden. 
-	 */
-	private static final int MIN_BEDIENUNGSDAUER = 5;
-	private static final int MAX_BEDIENUNGSDAUER = 10;	
+	private static final int MIN_BESTELLUNGSDAUER = 1 * 1000;
+	private static final int MAX_BESTELLUNGSDAUER = 1 * 1000;	
 	
-//	private Verkaufsraum verkaufsraum;
 	private Warteschlange warteschlange;
+	private Laufband laufband;
 	
 	private ServiceKraft kollege;
 		
-	public ServiceKraft(Warteschlange warteschlange) {
+	public ServiceKraft(Warteschlange warteschlange, Laufband laufband) {
 		zaehler++;		
 		this.setName("ServiceKraft-" + zaehler);
-//		this.verkaufsraum = verkaufsraum;
 		this.warteschlange = warteschlange;		
+		this.laufband = laufband;
 	}
 	
 	public void setKollege(ServiceKraft kollege) {
@@ -35,17 +32,29 @@ public class ServiceKraft extends Thread {
 	
 	public void run() {
 		while (!isInterrupted()) {
-			if (bedienen(warteschlange) != null) {
+//			if (kann ausliefern) {
+//				ausliefern
+//			laufband.remove();
+//			kassieren...
+//			} else {
+//				weiter bedienen
+			Bestellung bestellung = bedienen(warteschlange);
+			if (bestellung != null) {
 				erhoeheAnzahlBestellungen();
 				System.out.format("\t\t\t\t%s hat bis jetzt %d Bestellungen ANGENOMMEN\n\n",
-								Thread.currentThread().getName(), getAnzahlBestellungen());
-				if (kollege.getAnzahlBestellungen() - this.getAnzahlBestellungen() >= 3) {
+								Thread.currentThread().getName(), anzahlBestellungen());
+				if (kollege.anzahlBestellungen() - this.anzahlBestellungen() >= 3) {
 					System.err.format("\n----------PRIORITÄT FÜR %s----------\n\n", Thread.currentThread().getName());
 					Thread.currentThread().setPriority(MAX_PRIORITY);
 				} else {
 					Thread.currentThread().setPriority(NORM_PRIORITY);
+					synchronized (KuecheKraft.class) {
+						KuecheKraft.mehrBurger(bestellung.anzahl());
+						KuecheKraft.class.notifyAll();						
+					}
 				}
 			}
+//		}			
 		}
 		System.out.println(Thread.currentThread().getName() + " WURDE BEENDET");
 	}
@@ -60,7 +69,7 @@ public class ServiceKraft extends Thread {
 	 * 
 	 * @return
 	 */
-	public synchronized int getAnzahlBestellungen() {
+	public synchronized int anzahlBestellungen() {
 		return anzahlBestellungen;
 	}
 	
@@ -82,12 +91,13 @@ public class ServiceKraft extends Thread {
 				bestellung = naechsteKunde.getBestellung();
 				
 				System.out.format("\t\t\t\t%s NIMMT gerade %s von %s AN...\n",
-				Thread.currentThread().getName(), bestellung.getId(), naechsteKunde.getName());
+				Thread.currentThread().getName(), bestellung.id(), naechsteKunde.getName());
 				
-				Thread.sleep(bestellung.getDauer());
+				Thread.sleep(bestellung.dauer());
 				
 				System.out.format("\t\t\t\t%s HAT %d Burger bei %s BESTELLT und WARTET nun...\n\n",
-				naechsteKunde.getName(), bestellung.getAnzahl(), Thread.currentThread().getName());
+				naechsteKunde.getName(), bestellung.anzahl(), Thread.currentThread().getName());
+				
 			} catch (InterruptedException e) {
 				System.err.println(Thread.currentThread().getName() + " WURDE GEWECKT");
 				Thread.currentThread().interrupt();
@@ -96,10 +106,6 @@ public class ServiceKraft extends Thread {
 			}
 		}						
 		return bestellung;
-	}
-	
-	int getBedienungzeit() {
-		return Utility.random(MIN_BEDIENUNGSDAUER, MAX_BEDIENUNGSDAUER);
 	}	
 	
 	void BurgerEntnehemen() {

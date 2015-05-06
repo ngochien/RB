@@ -13,7 +13,7 @@ public class Bestellung {
 	 * Ein Kunde bestellt zufällig verteilt zwischen 1 und 8 Burger. 
 	 */
 	private static final int MIN_BESTELLUNG = 1;
-	private static final int MAX_BESTELLUNG = 8;
+	private static final int MAX_BESTELLUNG = 3;
 	
 	private static final int MIN_BESTELLUNGSDAUER = 1 * 1000;
 	private static final int MAX_BESTELLUNGSDAUER = 1 * 1000;	
@@ -30,15 +30,15 @@ public class Bestellung {
 		dauer = Utility.random(MIN_BESTELLUNGSDAUER, MAX_BESTELLUNGSDAUER);
 	}
 	
-	public String getId() {
+	public String id() {
 		return id;
 	}
 	
-	public int getAnzahl() {
+	public int anzahl() {
 		return anzahl;
 	}
 	
-	public int getDauer() {
+	public int dauer() {
 		return dauer;
 	}
 }

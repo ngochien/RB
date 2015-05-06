@@ -31,7 +31,7 @@ public class Warteschlange implements Puffer<Kunde> {
 		
 		/* Item zum Puffer hinzufügen */
 		kunden.add(kunde);
-		System.out.format("\t\t\t\t" + Thread.currentThread().getName() + " ENTER "
+		System.out.format(Thread.currentThread().getName() + " ENTER "
 						+ " Warteschlange-%d: %d Kunde(n) da \n", id, kunden.size());
 		
 		/*
@@ -58,7 +58,7 @@ public class Warteschlange implements Puffer<Kunde> {
 		/* Solange Puffer leer ==> warten! */
 		while (kunden.size() == 0) {
 			try {
-				System.out.println(Thread.currentThread().getName() + " wartet auf Kunde\n");
+				System.out.println(Thread.currentThread().getName() + " wartet auf neue Kunde");
 				this.wait(); // --> Warten in der Wait-Queue und Monitor des Puffers freigeben
 			} catch (InterruptedException e) {
 				/*

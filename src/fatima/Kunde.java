@@ -9,7 +9,13 @@ package fatima;
  */
 public class Kunde extends Thread {
 
-	private static int zaehler = 0;	
+	private static int zaehler = 0;
+	
+	/**
+	 * Ein Kunde bestellt zufällig verteilt zwischen 1 und 8 Burger. 
+	 */
+	private static final int MIN_BESTELLUNG = 1;
+	private static final int MAX_BESTELLUNG = 3;
 	
 	/**
 	 * Die Zeit, die der Kunde nach dem Erhalt der Ware braucht, bis er das Lokal verlassen hat.
@@ -40,7 +46,7 @@ public class Kunde extends Thread {
 
 	public void bestellen() {
 		bestellung = new Bestellung();
-		System.out.println(Thread.currentThread().getName() + " BESTELLT gerade " + bestellung.getAnzahl() + " Burger...");						
+		System.out.println(Thread.currentThread().getName() + " BESTELLT gerade " + bestellung.anzahl() + " Burger...");						
 	}
 	
 	public void run() {

@@ -11,14 +11,15 @@ public class Verkaufsraum {
 	private Semaphore platz;
 
 	private int anzahlWarteschlangen;
-	private Warteschlange[] warteschlangen;
 	private int aktuelleWarteschlange;
+	private Warteschlange[] warteschlangen;	
 	
 	private int anzahlServiceKrafts;
 	private ServiceKraft[] serviceKrafts;
 
+	private Laufband laufband;
 	private int anzahlKuecheKrafts;
-	private KuecheKraft[] kuecheKrafts;
+	private KuecheKraft[] kuecheKrafts;	
 	
 	private int abgewieseneKunden;
 
@@ -32,11 +33,12 @@ public class Verkaufsraum {
 	public void oeffnen() {
 		this.warteschlangen = new Warteschlange[anzahlWarteschlangen];
 		this.serviceKrafts = new ServiceKraft[anzahlServiceKrafts];		
-		this.kuecheKrafts = new KuecheKraft[anzahlKuecheKrafts];		
+		this.kuecheKrafts = new KuecheKraft[anzahlKuecheKrafts];
+		this.laufband = new Laufband();
 				
 		for (int i = 0; i < anzahlWarteschlangen; i++) {
 			warteschlangen[i] = new Warteschlange();
-			serviceKrafts[i] = new ServiceKraft(warteschlangen[i]);
+			serviceKrafts[i] = new ServiceKraft(warteschlangen[i], laufband);
 		}		
 		
 		for (int i = 0; i < anzahlServiceKrafts; i++) {	
@@ -47,7 +49,8 @@ public class Verkaufsraum {
 		}
 		
 		for (int i = 0; i < anzahlKuecheKrafts; i++) {
-			kuecheKrafts[i] = new KuecheKraft();
+			kuecheKrafts[i] = new KuecheKraft(laufband);
+			kuecheKrafts[i].start();
 		}
 	}
 	
@@ -62,7 +65,12 @@ public class Verkaufsraum {
 		}	
 		
 		for (int i = 0; i < anzahlKuecheKrafts; i++) {
-			kuecheKrafts[i] = null;
+			try {
+				kuecheKrafts[i].interrupt();			
+				kuecheKrafts[i].join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 

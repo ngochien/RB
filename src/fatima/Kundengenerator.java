@@ -49,7 +49,7 @@ public class Kundengenerator extends Thread {
 	
 	public void generieren() {
 		int anzahlKunden = Utility.random(min, max);
-		System.out.println("\t\t" + anzahlKunden + " Kunde(n) wurden generiert\n");
+		System.out.println("\n\t\t" + anzahlKunden + " Kunde(n) wurden generiert\n");
 		for (int i = 1; i <= anzahlKunden; i++) {
 			Kunde k = new Kunde(verkaufsraum);
 			kunden.add(k);

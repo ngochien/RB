@@ -38,8 +38,8 @@ public class ServiceKraft extends Thread {
 //			kassieren...
 //			} else {
 //				weiter bedienen
-			Bestellung bestellung = bedienen(warteschlange);
-			if (bestellung != null) {
+			int bestellung = bedienen(warteschlange);
+			if (bestellung >= 0) {
 				erhoeheAnzahlBestellungen();
 				System.out.format("\t\t\t\t%s hat bis jetzt %d Bestellungen ANGENOMMEN\n\n",
 								Thread.currentThread().getName(), anzahlBestellungen());
@@ -49,7 +49,7 @@ public class ServiceKraft extends Thread {
 				} else {
 					Thread.currentThread().setPriority(NORM_PRIORITY);
 					synchronized (KuecheKraft.class) {
-						KuecheKraft.mehrBurger(bestellung.anzahl());
+						KuecheKraft.mehrBurger(bestellung);
 						KuecheKraft.class.notifyAll();						
 					}
 				}
@@ -77,32 +77,32 @@ public class ServiceKraft extends Thread {
 		anzahlBestellungen++;
 	}
 	
-	public Bestellung bedienen(Warteschlange warteschlange) {
+	public int bedienen(Warteschlange warteschlange) {
 		Kunde naechsteKunde = warteschlange.remove();
-		Bestellung bestellung = null;
+		int bestellung = 0;
 		synchronized (naechsteKunde) {
 			naechsteKunde.notify();
 			try {
-				while (naechsteKunde.getBestellung() == null) {
+				while (naechsteKunde.getBestellung() == 0) {
 					System.out.println("\t\t\t\t" + Thread.currentThread().getName()
 									+ " WARTET auf Bestellung von " + naechsteKunde.getName());
 					naechsteKunde.wait();
 				}
 				bestellung = naechsteKunde.getBestellung();
 				
-				System.out.format("\t\t\t\t%s NIMMT gerade %s von %s AN...\n",
-				Thread.currentThread().getName(), bestellung.id(), naechsteKunde.getName());
+				System.out.format("\t\t\t\t%s NIMMT gerade Bestellung von %s AN...\n",
+									Thread.currentThread().getName(), naechsteKunde.getName());
 				
-				Thread.sleep(bestellung.dauer());
+				Thread.sleep(Utility.random(MIN_BESTELLUNGSDAUER, MAX_BESTELLUNGSDAUER));
 				
 				System.out.format("\t\t\t\t%s HAT %d Burger bei %s BESTELLT und WARTET nun...\n\n",
-				naechsteKunde.getName(), bestellung.anzahl(), Thread.currentThread().getName());
+				naechsteKunde.getName(), naechsteKunde.getBestellung(), Thread.currentThread().getName());
 				
 			} catch (InterruptedException e) {
 				System.err.println(Thread.currentThread().getName() + " WURDE GEWECKT");
 				Thread.currentThread().interrupt();
 				e.printStackTrace();
-				return null;
+				return 0;
 			}
 		}						
 		return bestellung;

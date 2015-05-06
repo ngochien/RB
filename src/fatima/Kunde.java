@@ -22,7 +22,7 @@ public class Kunde extends Thread {
 	 */	
 	
 	private Verkaufsraum verkaufsraum;
-	private Bestellung bestellung;
+	private int bestellung;
 	private int verweilszeit;
 	
 	public Kunde(Verkaufsraum verkaufsraum) {
@@ -40,13 +40,13 @@ public class Kunde extends Thread {
 		this.verweilszeit = verweilszeit;
 	}	
 	
-	public Bestellung getBestellung() {
+	public synchronized int getBestellung() {
 		return bestellung;
 	}
 
-	public void bestellen() {
-		bestellung = new Bestellung();
-		System.out.println(Thread.currentThread().getName() + " BESTELLT gerade " + bestellung.anzahl() + " Burger...");						
+	public synchronized void bestellen() {
+		bestellung = Utility.random(MIN_BESTELLUNG, MAX_BESTELLUNG);
+		System.out.println(Thread.currentThread().getName() + " BESTELLT gerade " + bestellung + " Burger...");						
 	}
 	
 	public void run() {

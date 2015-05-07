@@ -11,7 +11,7 @@ public class UtilityTest {
 		int min = 10;
 		int max = 100;
 		for (int i = 0; i < 1000000; i++) {
-			int result = Utility.random(min, max);
+			int result = Helper.random(min, max);
 			assertTrue(result >= min);
 			assertTrue(result <= max);
 		}

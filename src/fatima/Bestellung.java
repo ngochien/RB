@@ -26,8 +26,8 @@ public class Bestellung {
 	public Bestellung() {
 		zaehler++;
 		id = "Bestellung-" + zaehler;
-		anzahl = Utility.random(MIN_BESTELLUNG, MAX_BESTELLUNG);
-		dauer = Utility.random(MIN_BESTELLUNGSDAUER, MAX_BESTELLUNGSDAUER);
+		anzahl = Helper.random(MIN_BESTELLUNG, MAX_BESTELLUNG);
+		dauer = Helper.random(MIN_BESTELLUNGSDAUER, MAX_BESTELLUNGSDAUER);
 	}
 	
 	public String id() {

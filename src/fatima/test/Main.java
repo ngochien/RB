@@ -6,7 +6,7 @@ package fatima.test;
 import java.util.concurrent.PriorityBlockingQueue;
 
 import fatima.Kunde;
-import fatima.Utility;
+import fatima.Helper;
 
 /**
  * @author le
@@ -29,6 +29,6 @@ public class Main {
 //		System.out.println(q.remove().getBestellung());
 //		System.out.println(q.remove().getBestellung());
 		
-		System.out.println(Utility.random(3, 6));
+		System.out.println(Helper.random(3, 6));
 	}
 }

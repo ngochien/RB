@@ -5,8 +5,6 @@ package fatima;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @author le
@@ -19,8 +17,6 @@ public class Laufband implements Puffer<String>{
 	 */
 	private static final int DEFAULT_SIZE = 12;
 	
-	private final Lock laufbandLock = new ReentrantLock();	 
-	
 	private final int maxSize;
 	private List<String> items; // Liste als Speicher
 
@@ -28,47 +24,28 @@ public class Laufband implements Puffer<String>{
 		maxSize = DEFAULT_SIZE;
 		items = new LinkedList<String>();
 	}
-
-	/* Producer (Erzeuger) rufen die Methode ENTER auf */
+	
 	@Override
-	public synchronized void add(String item) {
-		laufbandLock.lock();
-		
+	public synchronized void add(String item) {		
 		while (items.size() == maxSize) {
 			try {
-				Verkaufsraum.lock.lock();
 				System.out.println(Thread.currentThread().getName() + " WARTET... LAUFBAND VOLL\n");
-				this.wait(); // --> Warten in der Wait-Queue und Monitor des Puffers freigeben
-			} catch (InterruptedException e) {
-				/*
-				 * Ausf�hrender Thread hat Interrupt erhalten --> Interrupt-Flag
-				 * im ausf�hrenden Thread setzen und Methode beenden
-				 */
+				this.wait();
+			} catch (InterruptedException e) {				
 				Thread.currentThread().interrupt();
 				return;
 			}
 		}
-		/* Item zum Puffer hinzuf�gen */
 		items.add(item);
 		System.out.format("\n\t\t\t\t%s LEGT 1 BURGER auf das Laufband: %d Burger noch da\n\n",
 							Thread.currentThread().getName(), items.size());
-
-		/*
-		 * Wartenden Consumer wecken --> es m�ssen ALLE Threads geweckt werden
-		 * (evtl. auch andere Producer), da es nur eine Wait-Queue gibt!
-		 */
+		
 		this.notifyAll();
-
-		/*
-		 * Pufferzugriff entsperren und ggf. Threads in Monitor-Queue wecken:
-		 * geschieht automatisch durch Monitor-Austritt
-		 */
 	}
 	
 	@Override
 	public synchronized String remove() {		
-		String item;
-		
+		String item;		
 		while (items.size() == 0) {
 			try {
 				System.out.println(Thread.currentThread().getName() + " WARTET... LAUFBAND LEER\n");
@@ -77,12 +54,9 @@ public class Laufband implements Puffer<String>{
 				Thread.currentThread().interrupt();
 				return null;
 			}
-		}
-		
-		item = items.remove(0);		
-		
+		}		
+		item = items.remove(0);
 		this.notifyAll();
-
 		return item;		
 	}
 	
@@ -98,8 +72,8 @@ public class Laufband implements Puffer<String>{
 			for (int i = 0; i < anzahl; i++) {
 				remove();
 			}
-			System.out.format("\t\t\t\t%s ENTNIMMT 1 BURGER aus dem Laufband: %d Burger noch da\n",
-								Thread.currentThread().getName(), items.size());
+			System.out.format("\t\t\t\t%s ENTNIMMT %d BURGER aus dem Laufband: %d Burger noch da\n",
+								Thread.currentThread().getName(), anzahl,  items.size());
 			return true;
 		}
 		return false;

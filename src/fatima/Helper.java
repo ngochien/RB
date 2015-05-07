@@ -7,7 +7,7 @@ package fatima;
  * @author le
  *
  */
-public class Utility {
+public class Helper {
 
 	/**
 	 * Liefert eine zufällige Ganzzahl zwischen <code>min</code> und

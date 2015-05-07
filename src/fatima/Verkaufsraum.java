@@ -1,9 +1,7 @@
 package fatima;
 
 import java.util.concurrent.Semaphore;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
+
 
 /**
  * @author le
@@ -11,57 +9,45 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class Verkaufsraum {
 
-	public static final Lock lock = new ReentrantLock();
-	public static final Condition busy = lock.newCondition();
-	
 	private Semaphore platz;
 
-	private int anzahlWarteschlangen;
-	private int aktuelleWarteschlange;
+	private Kasse[] kassen;
+	private Kueche[] kuechen;
+	private Laufband laufband;		
 	private Warteschlange[] warteschlangen;	
 	
-	private int anzahlKasse;
-	private Kasse[] kassen;	
-	
-	private Laufband laufband;
-	private int anzahlKueche;
-	private Kueche[] kuechen;	
-	
 	private int abgewieseneKunden;
+	private int aktuelleWarteschlange;
 
-	public Verkaufsraum(int anzahlPlatz, int anzahlKasse, int anzahlKueche) {
-		this.platz = new Semaphore(anzahlPlatz);	
-		this.anzahlKasse = anzahlKasse;
-		this.anzahlKueche = anzahlKueche;
-		this.anzahlWarteschlangen = anzahlKasse;
+	public Verkaufsraum(int anzahlPlatz, int anzahlKasse, int anzahlKueche) {		
+		this.laufband = new Laufband();
+		this.kassen = new Kasse[anzahlKasse];
+		this.kuechen = new Kueche[anzahlKueche];
+		this.platz = new Semaphore(anzahlPlatz);
+		this.warteschlangen = new Warteschlange[anzahlKasse];
 	}
 
-	public void oeffnen() {		
-		this.laufband = new Laufband();
-		this.kassen = new Kasse[anzahlKasse];		
-		this.kuechen = new Kueche[anzahlKueche];
-		this.warteschlangen = new Warteschlange[anzahlWarteschlangen];
-				
-		for (int i = 0; i < anzahlKasse; i++) {
+	public void oeffnen() {				
+		for (int i = 0; i < kassen.length; i++) {
 			warteschlangen[i] = new Warteschlange();
 			kassen[i] = new Kasse(warteschlangen[i], laufband);
 		}		
 		
-		for (int i = 0; i < anzahlKasse; i++) {	
+		for (int i = 0; i < kassen.length; i++) {	
 			int andereKasse = i + 1;
-			andereKasse = (andereKasse == anzahlKasse) ? 0 : andereKasse;
+			andereKasse = (andereKasse == kassen.length) ? 0 : andereKasse;
 			kassen[i].setAndereKasse(kassen[andereKasse]);			
 			kassen[i].start();
 		}
 		
-		for (int i = 0; i < anzahlKueche; i++) {
+		for (int i = 0; i < kuechen.length; i++) {
 			kuechen[i] = new Kueche(laufband);
 			kuechen[i].start();
 		}
 	}
 	
 	public void schliessen() {			
-		for (int i = 0; i < anzahlKasse; i++) {			
+		for (int i = 0; i < kassen.length; i++) {			
 			try {
 				kassen[i].interrupt();			
 				kassen[i].join();
@@ -70,7 +56,7 @@ public class Verkaufsraum {
 			}
 		}	
 		
-		for (int i = 0; i < anzahlKueche; i++) {
+		for (int i = 0; i < kuechen.length; i++) {
 			try {
 				kuechen[i].interrupt();			
 				kuechen[i].join();
@@ -95,8 +81,6 @@ public class Verkaufsraum {
 
 	/**
 	 * Liefert die Anzahl der bisher abgewiesenen Kunden zurück.
-	 * 
-	 * @return
 	 */
 	public synchronized int getAbgewieseneKunden() {
 		return abgewieseneKunden;
@@ -104,7 +88,7 @@ public class Verkaufsraum {
 
 	public synchronized Warteschlange getAktuelleWarteschlange() {
 		aktuelleWarteschlange++;
-		if (aktuelleWarteschlange >= anzahlWarteschlangen) {
+		if (aktuelleWarteschlange >= kassen.length) {
 			aktuelleWarteschlange = 0;
 		}
 		return warteschlangen[aktuelleWarteschlange];

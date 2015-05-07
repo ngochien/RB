@@ -47,22 +47,25 @@ public class Kueche extends Thread {
 	}
 
 	public void run() {
+		System.out.format("%s STARTET...\n", Thread.currentThread().getName());
 		while (!isInterrupted()) {
 			synchronized (getClass()) {
 				while (anzahlBurger() == 0) {
 					try {
-						System.out.println(Thread.currentThread().getName() + " WARTET, weil nichts zu tun ist...");
+						System.out.println(Thread.currentThread().getName() + " WARTET... KEINE BESTELLUNG");
 						getClass().wait();						
 					} catch (InterruptedException e) {
 						System.err.println(Thread.currentThread().getName() + " WURDE beim Warten GEWECKT");
 						Thread.currentThread().interrupt();
 						e.printStackTrace();
+						return;
 					}
 				}
 				wenigerBurger();	// Ein Burger wird sicherlich gemacht!
 			}
 			arbeiten();	// außerhalb des Synchronized-Blocks, damit alle parallel arbeiten können
 		}
+		System.out.println(Thread.currentThread().getName() + " BEENDET");
 	}
 	
 	public void arbeiten() {
@@ -77,15 +80,16 @@ public class Kueche extends Thread {
 	}
 	
 	public static synchronized int anzahlBurger() {
-		System.out.format("\t\t\t\tNOCH ZU MACHEN: %d BURGER\n", anzahlBurger);
+		System.out.format("\t\t\t\t%s CHECKT: NOCH ZU MACHEN: %d BURGER\n",
+							Thread.currentThread().getName(), anzahlBurger);
 		return anzahlBurger;
 	}
 	
 	public static synchronized void mehrBurger(int anzahl) {
 		anzahlBurger = anzahlBurger + anzahl;
-		System.out.format("\t\t\t\t%s MELDET eine Bestellung von %d BURGER\n",
-							Thread.currentThread().getName(), anzahl);
-		System.out.format("\t\t\t\tNOCH ZU MACHEN: %d BURGER\n", anzahlBurger);
+		System.out.format("\t\t\t\t%s MELDET eine Bestellung von %d BURGER\n"
+						+ "\t\t\t\tNOCH ZU MACHEN: %d BURGER\n",
+						Thread.currentThread().getName(), anzahl , anzahlBurger);
 	}
 	
 	public static synchronized void wenigerBurger() {
@@ -98,8 +102,8 @@ public class Kueche extends Thread {
 //			anzahlBurger = Utility.random(MIN_ANZAHL_BURGER, MAX_ANZAHL_BURGER);
 //			System.out.format("\t\t\t\tKEINE BESTELLUNG - %d BURGER\n", anzahlBurger());
 //		}
-		System.out.format("\t\t\t\t%s MACHT nun 1 BURGER...\n", Thread.currentThread().getName());
-		System.out.format("\t\t\t\tNOCH ZU MACHEN: %d BURGER\n", anzahlBurger);
+		System.out.format("\t\t\t\t%s MACHT nun 1 BURGER...\n\t\t\t\tNOCH ZU MACHEN: %d BURGER\n",
+							Thread.currentThread().getName(), anzahlBurger);
 	}
 	
 	public static void main(String[] args) {

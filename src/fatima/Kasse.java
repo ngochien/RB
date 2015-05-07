@@ -1,14 +1,7 @@
-/**
- * 
- */
 package fatima;
 
-import java.util.PriorityQueue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.PriorityBlockingQueue;
-
 /**
- * @author le
+ * @author Fatima
  *
  */
 public class Kasse extends Thread {
@@ -37,6 +30,7 @@ public class Kasse extends Thread {
 	}
 	
 	public void run() {
+		System.out.format("%s STARTET...\n", Thread.currentThread().getName());
 		while (!isInterrupted()) {
 //			if (kann ausliefern) {
 //				ausliefern
@@ -61,7 +55,7 @@ public class Kasse extends Thread {
 			}
 //		}			
 		}
-		System.out.println(Thread.currentThread().getName() + " WURDE BEENDET");
+		System.out.println(Thread.currentThread().getName() + " BEENDET");
 	}
 	
 	/**

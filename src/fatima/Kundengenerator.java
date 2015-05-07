@@ -33,14 +33,13 @@ public class Kundengenerator extends Thread {
 		while (!isInterrupted()) {			
 			generieren();
 		}
-		System.err.println(Thread.currentThread().getName() + " wartet. "
-				+ "Es kommen keine Kunden mehr. Nur noch aktuelle Kunden werden fertig bedient");
+		System.err.println("\nEs kommen keine Kunden mehr. Nur noch aktuelle Kunden werden fertig bedient");
 		for (Kunde k : kunden) {
 			try {
 				k.join();
 			} catch (InterruptedException e) {
-//				k.interrupt();
-//				e.printStackTrace();
+				k.interrupt();
+				e.printStackTrace();
 			}
 		}
 		

@@ -48,7 +48,7 @@ public class Kunde extends Thread {
 
 	public synchronized void bestellen() {
 		bestellung = Utility.random(MIN_BESTELLUNG, MAX_BESTELLUNG);
-		System.out.println(Thread.currentThread().getName() + " BESTELLT gerade " + bestellung + " Burger...");						
+		System.out.println(Thread.currentThread().getName() + " BESTELLT " + bestellung + " Burger");						
 	}
 	
 	public void run() {

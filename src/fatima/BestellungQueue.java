@@ -15,12 +15,7 @@ import java.util.Queue;
  */
 public class BestellungQueue implements Puffer<Kunde>{
 	
-	private Queue<Kunde> bestellungen;
-		
-	private String enterMessage;	
-	private String removeMessage;
-	private String waitingMessage;	
-	private String interruptedMessage;
+	private PriorityQueue<Kunde> bestellungen;	
 	
 	public BestellungQueue() {
 		bestellungen = new PriorityQueue<>(new Kunde.BestellungComparator());
@@ -29,9 +24,10 @@ public class BestellungQueue implements Puffer<Kunde>{
 	@Override
 	public synchronized void enter(Kunde kunde) {
 		bestellungen.add(kunde);
-		enterMessage = "\t\t\t\t" + Thread.currentThread().getName() +" LEGT Bestellung von "
-		+ kunde.getName() + " in die BestellungQueue: " + bestellungen.size() + " Bestellung(en) da";
-		System.out.println(enterMessage);		
+		
+		System.out.println("\t\t\t\t" + Thread.currentThread().getName() +" LEGT Bestellung von "
+				+ kunde.getName() + " in die BestellungQueue: " + bestellungen.size() + " Bestellung(en) da");
+		
 		this.notifyAll();	
 	}
 	
@@ -39,21 +35,20 @@ public class BestellungQueue implements Puffer<Kunde>{
 	public synchronized Kunde remove() {
 		Kunde kunde;
 		while (bestellungen.size() == 0) {
-			try {
-				waitingMessage = Thread.currentThread().getName() + " WARTET auf neue Bestellung";
-				System.out.println(waitingMessage);
+			try {				
+				System.out.println(Thread.currentThread().getName() + " WARTET auf neue Bestellung");
 				this.wait();
-			} catch (InterruptedException e) {
-				interruptedMessage = Thread.currentThread().getName() + " WURDE beim Warten GEWECKT";
-				System.out.println(interruptedMessage);
+			} catch (InterruptedException e) {			
+				System.out.println(Thread.currentThread().getName() + " WURDE beim Warten GEWECKT");
 				Thread.currentThread().interrupt();
 				return null;
 			}
 		}
 		kunde = bestellungen.remove();
-		removeMessage = "\t\t\t\t" + Thread.currentThread().getName() +" NIMMT Bestellung von "
-		+ kunde.getName() + " aus der BestellungQueue: " + bestellungen.size() + " Bestellung(en) da";
-		System.out.println(removeMessage);		
+		
+		System.out.println("\t\t\t\t" + Thread.currentThread().getName() +" NIMMT Bestellung von "
+				+ kunde.getName() + " aus der BestellungQueue: " + bestellungen.size() + " Bestellung(en) da");
+		
 		this.notifyAll();
 		return kunde;
 	}

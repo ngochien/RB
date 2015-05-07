@@ -10,7 +10,7 @@ package fatima;
  */
 public class Lokal {
 
-	public static final int SIMULATION_ZEIT = 3000 * 1000;
+	public static final int SIMULATION_ZEIT = 10 * 1000;
 	
 	public static final int ANZAHL_PLATZ = 5;
 	public static final int ZEITRAUM = 1000 * 1000;

@@ -1,6 +1,9 @@
 package fatima;
 
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @author le
@@ -8,6 +11,9 @@ import java.util.concurrent.Semaphore;
  */
 public class Verkaufsraum {
 
+	public final Lock lock = new ReentrantLock();
+	public final Condition busy = lock.newCondition();
+	
 	private Semaphore platz;
 
 	private int anzahlWarteschlangen;

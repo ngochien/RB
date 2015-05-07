@@ -5,6 +5,9 @@ package fatima;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Ob diese Kalsse wirklich notwendig ist?
@@ -15,6 +18,10 @@ import java.util.List;
 public class Warteschlange implements Puffer<Kunde> {
 
 	private static int zaehler = 0;
+	
+	private final Lock bufferLock = new ReentrantLock();
+	private final Condition notFull = bufferLock.newCondition();
+	private final Condition notEmpty = bufferLock.newCondition();
 	
 	private List<Kunde> kunden; // Liste als Speicher
 	
@@ -63,8 +70,7 @@ public class Warteschlange implements Puffer<Kunde> {
 		/* Solange Puffer leer ==> warten! */
 		while (kunden.size() == 0) {
 			try {
-				waitingMessage = Thread.currentThread().getName() + " WARTET auf neue Kunde";
-				System.out.println(waitingMessage);
+				System.out.println(Thread.currentThread().getName() + " WARTET auf neue Kunde");
 				this.wait(); // --> Warten in der Wait-Queue und Monitor des Puffers freigeben
 			} catch (InterruptedException e) {
 				/*

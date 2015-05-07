@@ -50,7 +50,7 @@ public class Kunde extends Thread {
 
 	public synchronized void bestellen() throws InterruptedException {
 		bestellung = Utility.random(MIN_BESTELLUNG, MAX_BESTELLUNG);
-		System.out.println(Thread.currentThread().getName() + " BESTELLT " + bestellung + " Burger");
+		System.out.println(Thread.currentThread().getName() + " BESTELLT " + bestellung + " BURGER");
 		this.notify();						
 		this.wait();	// Wartet auf notify von Kasse
 	}
@@ -60,7 +60,7 @@ public class Kunde extends Thread {
 			if (kommen()) {				
 				sichEinreihen(verkaufsraum.getAktuelleWarteschlange());
 				bestellen();
-				// ...
+				bezahlen();
 				verlassen();							
 			}
 		} catch (InterruptedException e) {
@@ -91,10 +91,11 @@ public class Kunde extends Thread {
 	public synchronized void sichEinreihen(Warteschlange warteschlange) throws InterruptedException {
 		warteschlange.add(this);	
 		this.wait();
-	}
+	}	
 	
-	void bezahlen() {
-		System.out.println("Der Kunde zahlt erst, wenn er die Ware vollständig sieht.");
+	public synchronized void bezahlen() {
+		System.out.println(Thread.currentThread().getName() + " BEZAHLT " + bestellung + " BURGER");
+		this.notify();
 	}
 
 	public static class BestellungComparator implements Comparator<Kunde> {

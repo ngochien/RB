@@ -34,16 +34,16 @@ public class Kundengenerator extends Thread {
 			generieren();
 		}
 		System.err.println("\nEs kommen keine Kunden mehr. Nur noch aktuelle Kunden werden fertig bedient");
-		for (Kunde k : kunden) {
-			try {
-				System.out.println("Join " + k.getName());
-				k.join();
-			} catch (InterruptedException e) {
+//		for (Kunde k : kunden) {
+//			try {
+//				System.out.println("Join " + k.getName());
+//				k.join();
+//			} catch (InterruptedException e) {
 //				k.interrupt();
-				Thread.currentThread().interrupt();
-				e.printStackTrace();
-			}
-		}
+//				Thread.currentThread().interrupt();
+//				e.printStackTrace();
+//			}
+//		}
 		
 		System.err.println(Thread.currentThread().getName() + " wurde beendet. ");
 	}

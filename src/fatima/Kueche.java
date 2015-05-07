@@ -64,13 +64,15 @@ public class Kueche extends Thread {
 			}
 			arbeiten();	// außerhalb des Synchronized-Blocks, damit alle parallel arbeiten können
 		}
+		// Alle Burger fertig machen vor feierabend
 		System.out.println(Thread.currentThread().getName() + " BEENDET");
 	}
 	
 	public void arbeiten() {
 		try {
 			Thread.sleep(Utility.random(MIN_ZUBEREITUNGSZEIT, MAX_ZUBEREITUNGSZEIT));
-			laufband.add("Burger-" + ++zaehler2);			
+			laufband.add("Burger-" + ++zaehler2);
+			
 		} catch (InterruptedException e) {
 			System.err.println(Thread.currentThread().getName() + " WURDE beim Schlafen GEWECKT");
 			Thread.currentThread().interrupt();

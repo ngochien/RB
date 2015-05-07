@@ -53,7 +53,8 @@ public class Kasse extends Thread {
 				// ansonsten versucht er sofort neue Bestellung anzunehmen.
 			}	
 		}
-//		}			
+//		}
+		// alle Kunden fertig bedient.
 		System.out.println(Thread.currentThread().getName() + " BEENDET");
 	}
 
@@ -133,11 +134,23 @@ public class Kasse extends Thread {
 	
 	public void ausliefern() {
 		if (bestellungen.isEmpty() == false) {
-			Kunde kunde = bestellungen.peek();
+			Kunde kunde = bestellungen.element();
 			int anzahl = kunde.getBestellung();
 			synchronized (kunde) {								
 				if(laufband.remove(anzahl)) {
 					kunde.notify();
+					try {
+						System.out.format("\t\t\t\t%s WARTET AUF BEZAHLUNG VON %s",
+								Thread.currentThread().getName(), kunde.getName());
+						kunde.wait();	// Warte bis der Kunde bezahlt hat
+						bestellungen.remove(kunde);
+						System.out.format("\t\t\t\t%s GIBT %d BURGER AN %s", Thread.currentThread().getName(),
+											kunde.getBestellung(), kunde.getName());
+					} catch (InterruptedException e) {
+						System.err.println(Thread.currentThread().getName() + " WURDE GEWECKT");
+						Thread.currentThread().interrupt();
+						e.printStackTrace();
+					}						
 				}
 			}			
 			

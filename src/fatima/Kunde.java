@@ -22,6 +22,8 @@ public class Kunde extends Thread {
 	/**
 	 * Die Zeit, die der Kunde nach dem Erhalt der Ware braucht, bis er das Lokal verlassen hat.
 	 */	
+	private static final int MIN_ZEIT = 3 * 1000;
+	private static final int MAX_ZEIT = 7 * 1000;	
 	
 	private Verkaufsraum verkaufsraum;
 	private int bestellung;
@@ -50,25 +52,40 @@ public class Kunde extends Thread {
 		bestellung = Utility.random(MIN_BESTELLUNG, MAX_BESTELLUNG);
 		System.out.println(Thread.currentThread().getName() + " BESTELLT " + bestellung + " Burger");
 		this.notify();						
-		this.wait();	
+		this.wait();	// Wartet auf notify von Kasse
 	}
 	
-	public void run() {
-		System.out.println(Thread.currentThread().getName() + " KOMMT ");
-		verkaufsraum.betreten();
-		if (!isInterrupted()) {	
-			try {
+	public void run() {	
+		try {
+			if (kommen()) {				
 				sichEinreihen(verkaufsraum.getAktuelleWarteschlange());
 				bestellen();
 				// ...
-				verkaufsraum.verlassen();
-			} catch (InterruptedException e) {
-				System.err.println(Thread.currentThread().getName() + " WURDE beim Warten GEWECKT und HAUT AB");
-				Thread.currentThread().interrupt();
-				e.printStackTrace();	
-			}						
-		}
+				verlassen();							
+			}
+		} catch (InterruptedException e) {
+			System.err.println(Thread.currentThread().getName() + " WURDE GEWECKT und HAUT AB");
+			Thread.currentThread().interrupt();
+			e.printStackTrace();	
+		}	
 		System.out.println(Thread.currentThread().getName() + " WURDE BEENDET");
+	}
+
+	/**
+	 * 
+	 */
+	public boolean kommen() {
+		System.out.println(Thread.currentThread().getName() + " KOMMT ");
+		return verkaufsraum.betreten();
+	}
+
+	/**
+	 * @throws InterruptedException 
+	 * 
+	 */
+	public synchronized void verlassen() throws InterruptedException {
+		Thread.sleep(Utility.random(MIN_ZEIT, MAX_ZEIT));
+		verkaufsraum.verlassen();
 	}
 		
 	public synchronized void sichEinreihen(Warteschlange warteschlange) throws InterruptedException {
@@ -79,14 +96,6 @@ public class Kunde extends Thread {
 	void bezahlen() {
 		System.out.println("Der Kunde zahlt erst, wenn er die Ware vollständig sieht.");
 	}
-	
-	void verlassen() {
-		System.out.println("Nach dem Erhalt der Ware braucht der Kunde weitere 10 bis 20  Sekunden (zufällig) bis er das Lokal verlassen hat.");
-	}
-	
-//	int getZeitZuVerlassen() {
-//		return Utility.random(MIN_ZEIT_ZU_VERLASSEN, MAX_ZEIT_ZU_VERLASSEN);
-//	}
 
 	public static class BestellungComparator implements Comparator<Kunde> {
 		@Override

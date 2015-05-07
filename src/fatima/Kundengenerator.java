@@ -39,7 +39,7 @@ public class Kundengenerator extends Thread {
 				System.out.println("Join " + k.getName());
 				k.join();
 			} catch (InterruptedException e) {
-				k.interrupt();
+//				k.interrupt();
 				Thread.currentThread().interrupt();
 				e.printStackTrace();
 			}

@@ -79,9 +79,7 @@ public class Laufband implements Puffer<String>{
 			}
 		}
 		
-		item = items.remove(0);
-		System.out.format("\t\t\t\t%s ENTNIMMT 1 BURGER aus dem Laufband: %d Burger noch da\n",
-						Thread.currentThread().getName(), items.size());
+		item = items.remove(0);		
 		
 		this.notifyAll();
 
@@ -93,11 +91,17 @@ public class Laufband implements Puffer<String>{
 	}
 	
 	/**
-	 * Sperrt das Laufband und nimmt eine bestimmte Anzahl von Burger raus.
+	 * Sperrt das Laufband und nimmt eine bestimmte Anzahl von Burger raus, wenn genug da sind
 	 */
-	public synchronized void remove(int anzahl) {
-		for (int i = 0; i < anzahl; i++) {
-			remove();
+	public synchronized boolean remove(int anzahl) {
+		if (size() >= anzahl) {
+			for (int i = 0; i < anzahl; i++) {
+				remove();
+			}
+			System.out.format("\t\t\t\t%s ENTNIMMT 1 BURGER aus dem Laufband: %d Burger noch da\n",
+								Thread.currentThread().getName(), items.size());
+			return true;
 		}
+		return false;
 	}
 }

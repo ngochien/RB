@@ -18,8 +18,10 @@ public class Kasse extends Thread {
 	private Queue<Kunde> bestellungen;
 	private Laufband laufband;	
 	
-	private Kasse naechsteKasse;
-		
+	private Kasse andereKasse;
+	
+	private boolean prioritaet;
+	
 	public Kasse(Warteschlange warteschlange, Laufband laufband) {
 		zaehler++;		
 		this.setName("Kasse-" + zaehler);
@@ -28,8 +30,8 @@ public class Kasse extends Thread {
 		this.laufband = laufband;
 	}
 	
-	public void setNaechsteKasse(Kasse naechsteKasse) {
-		this.naechsteKasse = naechsteKasse;
+	public void setAndereKasse(Kasse andereKasse) {
+		this.andereKasse = andereKasse;
 	}
 	
 	public void run() {
@@ -42,23 +44,27 @@ public class Kasse extends Thread {
 //			} else {
 //				weiter bedienen
 			int bestellung = bedienen(warteschlange);
-			if (bestellung >= 0) {
+			if (bestellung > 0) {
 				erhoeheAnzahlBestellungen();				
-				if (naechsteKasse.anzahlBestellungen() - this.anzahlBestellungen() >= 3) {
-					System.err.format("\n----------PRIORITÄT FÜR %s----------\n\n", Thread.currentThread().getName());
-					Thread.currentThread().setPriority(MAX_PRIORITY);
-				} else {
-					Thread.currentThread().setPriority(NORM_PRIORITY);
-					synchronized (Kueche.class) {
-						Kueche.mehrBurger(bestellung);						
-						Kueche.class.notifyAll();						
-					}
-					ausliefern();
-				}
+				meldeBestellung(bestellung);							
 			}
-//		}			
+			if (!prioritaet) {
+				ausliefern();	// Wenn er keine Priorität hat, dann arbeitet er normal weiter,
+				// ansonsten versucht er sofort neue Bestellung anzunehmen.
+			}	
 		}
+//		}			
 		System.out.println(Thread.currentThread().getName() + " BEENDET");
+	}
+
+	/**
+	 * @param bestellung
+	 */
+	public void meldeBestellung(int bestellung) {
+		synchronized (Kueche.class) {
+			Kueche.mehrBurger(bestellung);						
+			Kueche.class.notifyAll();						
+		}
 	}
 	
 	/**
@@ -79,6 +85,15 @@ public class Kasse extends Thread {
 		anzahlBestellungen = anzahlBestellungen() + 1;
 		System.out.format("\t\t\t\t%s HAT bis jetzt %d Bestellung(en) ANGENOMMEN\n\n",
 							Thread.currentThread().getName(), anzahlBestellungen());
+		
+		if (andereKasse.anzahlBestellungen() - this.anzahlBestellungen() >= 3) {
+			System.err.format("\n----------PRIORITÄT FÜR %s----------\n\n", Thread.currentThread().getName());
+			Thread.currentThread().setPriority(MAX_PRIORITY);
+			prioritaet = true;
+		} else {
+			Thread.currentThread().setPriority(NORM_PRIORITY);
+			prioritaet = false;
+		}
 	}
 	
 	public int bedienen(Warteschlange warteschlange) {
@@ -117,6 +132,16 @@ public class Kasse extends Thread {
 	}	
 	
 	public void ausliefern() {
+		if (bestellungen.isEmpty() == false) {
+			Kunde kunde = bestellungen.peek();
+			int anzahl = kunde.getBestellung();
+			synchronized (kunde) {								
+				if(laufband.remove(anzahl)) {
+					kunde.notify();
+				}
+			}			
+			
+		}		
 //		System.out.println("Die Service-Kraft übergibt die Burger erst, wenn der Kunde bezahlt hat.");
 	}
 }

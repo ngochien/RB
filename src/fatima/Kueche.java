@@ -79,7 +79,7 @@ public class Kueche extends Thread {
 	}
 	
 	public static synchronized int anzahlBurger() {
-		System.out.format("\t\t\t\t%s CHECKT: NOCH ZU MACHEN: %d BURGER\n",
+		System.out.format("%s CHECKT: NOCH ZU MACHEN: %d BURGER\n",
 							Thread.currentThread().getName(), anzahlBurger);
 		return anzahlBurger;
 	}

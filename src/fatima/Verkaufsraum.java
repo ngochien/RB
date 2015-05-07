@@ -42,9 +42,9 @@ public class Verkaufsraum {
 		}		
 		
 		for (int i = 0; i < anzahlKasse; i++) {	
-			int naechsteKasse = i + 1;
-			naechsteKasse = (naechsteKasse == anzahlKasse) ? 0 : naechsteKasse;
-			kassen[i].setNaechsteKasse(kassen[naechsteKasse]);			
+			int andereKasse = i + 1;
+			andereKasse = (andereKasse == anzahlKasse) ? 0 : andereKasse;
+			kassen[i].setAndereKasse(kassen[andereKasse]);			
 			kassen[i].start();
 		}
 		
@@ -74,15 +74,16 @@ public class Verkaufsraum {
 		}
 	}
 
-	public void betreten() {		
+	public boolean betreten() {		
 		if (platz.tryAcquire() == true) {
-			System.out.println(Thread.currentThread().getName() + " BETRITT den Verkaufsraum");						
+			System.out.println(Thread.currentThread().getName() + " BETRITT den Verkaufsraum");	
+			return true;
 		} else {
 			synchronized (this) {
 				abgewieseneKunden++;
 			}
 			System.out.println(Thread.currentThread().getName() + " GEHT WEG");
-			Thread.currentThread().interrupt();
+			return false;
 		}
 	}
 
@@ -104,7 +105,7 @@ public class Verkaufsraum {
 	}
 	
 	public void verlassen() {
-		System.out.println(Thread.currentThread().getName() + " ist fertig und verlasst das Lokal");
+		System.out.println(Thread.currentThread().getName() + " FERTIG und VERLASST das Lokal");
 		platz.release();
 	}
 }

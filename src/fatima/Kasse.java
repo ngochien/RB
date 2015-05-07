@@ -11,7 +11,7 @@ import java.util.concurrent.PriorityBlockingQueue;
  * @author le
  *
  */
-public class ServiceKraft extends Thread {
+public class Kasse extends Thread {
 
 	private static int zaehler = 0;
 	
@@ -22,18 +22,18 @@ public class ServiceKraft extends Thread {
 	private Warteschlange warteschlange;
 	private Laufband laufband;	
 	
-	private ServiceKraft kollege;
+	private Kasse naechsteKasse;
 		
-	public ServiceKraft(Warteschlange warteschlange, BestellungQueue bestellungen, Laufband laufband) {
+	public Kasse(Warteschlange warteschlange, BestellungQueue bestellungen, Laufband laufband) {
 		zaehler++;		
-		this.setName("ServiceKraft-" + zaehler);		
+		this.setName("Kasse-" + zaehler);		
 		this.warteschlange = warteschlange;				
 		this.bestellungen = bestellungen;
 		this.laufband = laufband;
 	}
 	
-	public void setKollege(ServiceKraft kollege) {
-		this.kollege = kollege;
+	public void setNaechsteKasse(Kasse naechsteKasse) {
+		this.naechsteKasse = naechsteKasse;
 	}
 	
 	public void run() {
@@ -47,14 +47,14 @@ public class ServiceKraft extends Thread {
 			int bestellung = bedienen(warteschlange);
 			if (bestellung >= 0) {
 				erhoeheAnzahlBestellungen();				
-				if (kollege.anzahlBestellungen() - this.anzahlBestellungen() >= 3) {
+				if (naechsteKasse.anzahlBestellungen() - this.anzahlBestellungen() >= 3) {
 					System.err.format("\n----------PRIORITÄT FÜR %s----------\n\n", Thread.currentThread().getName());
 					Thread.currentThread().setPriority(MAX_PRIORITY);
 				} else {
 					Thread.currentThread().setPriority(NORM_PRIORITY);
-					synchronized (KuecheKraft.class) {
-						KuecheKraft.mehrBurger(bestellung);						
-						KuecheKraft.class.notifyAll();						
+					synchronized (Kueche.class) {
+						Kueche.mehrBurger(bestellung);						
+						Kueche.class.notifyAll();						
 					}
 					ausliefern();
 				}
@@ -80,7 +80,7 @@ public class ServiceKraft extends Thread {
 	
 	public synchronized void erhoeheAnzahlBestellungen() {
 		anzahlBestellungen = anzahlBestellungen() + 1;
-		System.out.format("\t\t\t\t%s hat bis jetzt %d Bestellungen ANGENOMMEN\n\n",
+		System.out.format("\t\t\t\t%s HAT bis jetzt %d Bestellung(en) ANGENOMMEN\n\n",
 							Thread.currentThread().getName(), anzahlBestellungen());
 	}
 	

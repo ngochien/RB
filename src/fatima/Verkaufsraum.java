@@ -14,63 +14,63 @@ public class Verkaufsraum {
 	private int aktuelleWarteschlange;
 	private Warteschlange[] warteschlangen;	
 	
-	private int anzahlServiceKrafts;
-	private ServiceKraft[] serviceKrafts;
+	private int anzahlKasse;
+	private Kasse[] kassen;
 
 	private BestellungQueue bestellungen;
 	
 	private Laufband laufband;
-	private int anzahlKuecheKrafts;
-	private KuecheKraft[] kuecheKrafts;	
+	private int anzahlKueche;
+	private Kueche[] kuechen;	
 	
 	private int abgewieseneKunden;
 
-	public Verkaufsraum(int anzahlPlatz, int anzahlServiceKrafts, int anzahlKuecheKrafts) {
-		this.platz = new Semaphore(anzahlPlatz);
-		this.anzahlWarteschlangen = anzahlServiceKrafts;
-		this.anzahlServiceKrafts = anzahlServiceKrafts;
-		this.anzahlKuecheKrafts = anzahlKuecheKrafts;
+	public Verkaufsraum(int anzahlPlatz, int anzahlKasse, int anzahlKueche) {
+		this.platz = new Semaphore(anzahlPlatz);	
+		this.anzahlKasse = anzahlKasse;
+		this.anzahlKueche = anzahlKueche;
+		this.anzahlWarteschlangen = anzahlKasse;
 	}
 
-	public void oeffnen() {
-		this.warteschlangen = new Warteschlange[anzahlWarteschlangen];
-		this.serviceKrafts = new ServiceKraft[anzahlServiceKrafts];		
-		this.kuecheKrafts = new KuecheKraft[anzahlKuecheKrafts];
-		this.bestellungen = new BestellungQueue();
+	public void oeffnen() {		
 		this.laufband = new Laufband();
+		this.kassen = new Kasse[anzahlKasse];		
+		this.kuechen = new Kueche[anzahlKueche];
+		this.bestellungen = new BestellungQueue();
+		this.warteschlangen = new Warteschlange[anzahlWarteschlangen];
 				
-		for (int i = 0; i < anzahlWarteschlangen; i++) {
+		for (int i = 0; i < anzahlKasse; i++) {
 			warteschlangen[i] = new Warteschlange();
-			serviceKrafts[i] = new ServiceKraft(warteschlangen[i], bestellungen, laufband);
+			kassen[i] = new Kasse(warteschlangen[i], bestellungen, laufband);
 		}		
 		
-		for (int i = 0; i < anzahlServiceKrafts; i++) {	
-			int kollege = i + 1;
-			kollege = (kollege == anzahlServiceKrafts) ? 0 : kollege;
-			serviceKrafts[i].setKollege(serviceKrafts[kollege]);			
-			serviceKrafts[i].start();
+		for (int i = 0; i < anzahlKasse; i++) {	
+			int naechsteKasse = i + 1;
+			naechsteKasse = (naechsteKasse == anzahlKasse) ? 0 : naechsteKasse;
+			kassen[i].setNaechsteKasse(kassen[naechsteKasse]);			
+			kassen[i].start();
 		}
 		
-		for (int i = 0; i < anzahlKuecheKrafts; i++) {
-			kuecheKrafts[i] = new KuecheKraft(bestellungen, laufband);
-			kuecheKrafts[i].start();
+		for (int i = 0; i < anzahlKueche; i++) {
+			kuechen[i] = new Kueche(bestellungen, laufband);
+			kuechen[i].start();
 		}
 	}
 	
 	public void schliessen() {			
-		for (int i = 0; i < anzahlServiceKrafts; i++) {			
+		for (int i = 0; i < anzahlKasse; i++) {			
 			try {
-				serviceKrafts[i].interrupt();			
-				serviceKrafts[i].join();
+				kassen[i].interrupt();			
+				kassen[i].join();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}	
 		
-		for (int i = 0; i < anzahlKuecheKrafts; i++) {
+		for (int i = 0; i < anzahlKueche; i++) {
 			try {
-				kuecheKrafts[i].interrupt();			
-				kuecheKrafts[i].join();
+				kuechen[i].interrupt();			
+				kuechen[i].join();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

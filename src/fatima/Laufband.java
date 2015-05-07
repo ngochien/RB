@@ -5,6 +5,8 @@ package fatima;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @author le
@@ -17,6 +19,8 @@ public class Laufband implements Puffer<String>{
 	 */
 	private static final int DEFAULT_SIZE = 12;
 	
+	private final Lock laufbandLock = new ReentrantLock();	 
+	
 	private final int maxSize;
 	private List<String> items; // Liste als Speicher
 
@@ -28,15 +32,11 @@ public class Laufband implements Puffer<String>{
 	/* Producer (Erzeuger) rufen die Methode ENTER auf */
 	@Override
 	public synchronized void add(String item) {
-		/*
-		 * Pufferzugriff sperren (bzw. ggf. auf Zugriff warten): geschieht
-		 * automatisch durch Monitor-Eintritt ("synchronized" entspricht
-		 * synchronized(this){...})
-		 */
-
-		/* Solange Puffer voll ==> warten! */
+		laufbandLock.lock();
+		
 		while (items.size() == maxSize) {
 			try {
+				Verkaufsraum.lock.lock();
 				System.out.println(Thread.currentThread().getName() + " WARTET... LAUFBAND VOLL\n");
 				this.wait(); // --> Warten in der Wait-Queue und Monitor des Puffers freigeben
 			} catch (InterruptedException e) {

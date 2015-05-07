@@ -5,7 +5,6 @@ package fatima;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -19,19 +18,12 @@ public class Warteschlange implements Puffer<Kunde> {
 
 	private static int zaehler = 0;
 	
-	private final Lock bufferLock = new ReentrantLock();
-	private final Condition notFull = bufferLock.newCondition();
-	private final Condition notEmpty = bufferLock.newCondition();
+	private final Lock warteschlangeLock = new ReentrantLock();	 
 	
 	private List<Kunde> kunden; // Liste als Speicher
 	
 	private int id;	
-	
-	private String enterMessage;	
-	private String removeMessage;
-	private String waitingMessage;	
-	private String interruptedMessage;
-
+		
 	public Warteschlange() {
 		kunden = new LinkedList<>();
 		zaehler++;
@@ -39,67 +31,51 @@ public class Warteschlange implements Puffer<Kunde> {
 	}	
 	
 	@Override
-	public synchronized void add(Kunde kunde) {				
+	public void add(Kunde kunde) {	
+		// Zugriff auf Buffer sperren
+	    warteschlangeLock.lock();
+	    
 		/* Item zum Puffer hinzufügen */
-		kunden.add(kunde);
-		enterMessage = Thread.currentThread().getName() +" ENTER " +
-				" in die Warteschlange-" + id + ": Länge = " + kunden.size();
-		System.out.println(enterMessage);
-		
-		/*
-		 * Wartenden Consumer wecken --> es müssen ALLE Threads geweckt werden
-		 * (evtl. auch andere Producer), da es nur eine Wait-Queue gibt!
-		 */
-		this.notifyAll();		
-		
-		/*
-		 * Pufferzugriff entsperren und ggf. Threads in Monitor-Queue wecken:
-		 * geschieht automatisch durch Monitor-Austritt
-		 */
+		kunden.add(kunde);		
+		System.out.println(Thread.currentThread().getName() +" ENTER " +
+				" in die Warteschlange-" + id + ": Länge = " + kunden.size());				
+
+	    // Zugriff auf Buffer freigeben
+	    warteschlangeLock.unlock();	
+	    
+		Verkaufsraum.lock.lock();
+		// Gezielt einen wartenden Consumer wecken (spezielle Warteschlange!)
+		Verkaufsraum.busy.signalAll();
+		Verkaufsraum.lock.unlock();
 	}
 
 	@Override
-	public synchronized Kunde remove() {		
-		/*
-		 * Pufferzugriff sperren (bzw. ggf. auf Zugriff warten): geschieht
-		 * automatisch durch Monitor-Eintritt ("synchronized" entspricht
-		 * synchronized(this){...})
-		 */
-		Kunde kunde;
+	public Kunde remove() {
+		// Zugriff auf Buffer sperren
+		warteschlangeLock.lock();
 
-		/* Solange Puffer leer ==> warten! */
-		while (kunden.size() == 0) {
+		Kunde kunde = null;
+
+		if (kunden.size() == 0) {
+			warteschlangeLock.unlock();
+			
 			try {
-				System.out.println(Thread.currentThread().getName() + " WARTET auf neue Kunde");
-				this.wait(); // --> Warten in der Wait-Queue und Monitor des Puffers freigeben
+				Verkaufsraum.lock.lock();
+				System.out.println(Thread.currentThread().getName() + " WARTET... Keine Kunde da");
+				Verkaufsraum.busy.await();
+				Verkaufsraum.lock.unlock();
 			} catch (InterruptedException e) {
-				/*
-				 * Ausführender Thread hat Interrupt erhalten --> Interrupt-Flag
-				 * im ausführenden Thread setzen und Methode beenden
-				 */
-				interruptedMessage = Thread.currentThread().getName() + " WURDE beim Warten GEWECKT";
-				System.out.println(interruptedMessage);
+				System.out.println(Thread.currentThread().getName() + " WURDE beim Warten GEWECKT");
 				Thread.currentThread().interrupt();
-				return null;
 			}
+		} else {
+			kunde = kunden.remove(0);
+			System.out.println("\t\t\t\t" + Thread.currentThread().getName() + " HOLT "
+							+ kunde.getName() + " aus der Warteschlange-" + id + ": Länge = " + kunden.size());
+
+			warteschlangeLock.unlock();
 		}
-		/* Item aus dem Buffer entfernen */
-		kunde = kunden.remove(0);		
-		removeMessage = "\t\t\t\t" + Thread.currentThread().getName() +" HOLT "
-						+ kunde.getName() + " aus der Warteschlange-" + id + ": Länge = " + kunden.size();
-		System.out.println(removeMessage);
-
-		/*
-		 * Wartenden Producer wecken --> es müssen ALLE Threads geweckt werden
-		 * (evtl. auch andere Consumer), da es nur eine Wait-Queue gibt!
-		 */
-		this.notifyAll();
-
+		
 		return kunde;
-		/*
-		 * Pufferzugriff entsperren und ggf. Threads in Monitor-Queue wecken:
-		 * geschieht automatisch durch Monitor-Austritt
-		 */
 	}
-
 }

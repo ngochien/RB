@@ -15,9 +15,7 @@ public class Verkaufsraum {
 	private Warteschlange[] warteschlangen;	
 	
 	private int anzahlKasse;
-	private Kasse[] kassen;
-
-	private BestellungQueue bestellungen;
+	private Kasse[] kassen;	
 	
 	private Laufband laufband;
 	private int anzahlKueche;
@@ -36,12 +34,11 @@ public class Verkaufsraum {
 		this.laufband = new Laufband();
 		this.kassen = new Kasse[anzahlKasse];		
 		this.kuechen = new Kueche[anzahlKueche];
-		this.bestellungen = new BestellungQueue();
 		this.warteschlangen = new Warteschlange[anzahlWarteschlangen];
 				
 		for (int i = 0; i < anzahlKasse; i++) {
 			warteschlangen[i] = new Warteschlange();
-			kassen[i] = new Kasse(warteschlangen[i], bestellungen, laufband);
+			kassen[i] = new Kasse(warteschlangen[i], laufband);
 		}		
 		
 		for (int i = 0; i < anzahlKasse; i++) {	
@@ -52,7 +49,7 @@ public class Verkaufsraum {
 		}
 		
 		for (int i = 0; i < anzahlKueche; i++) {
-			kuechen[i] = new Kueche(bestellungen, laufband);
+			kuechen[i] = new Kueche(laufband);
 			kuechen[i].start();
 		}
 	}

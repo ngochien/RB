@@ -32,7 +32,7 @@ public class Warteschlange implements Puffer<Kunde> {
 	}	
 	
 	@Override
-	public synchronized void enter(Kunde kunde) {				
+	public synchronized void add(Kunde kunde) {				
 		/* Item zum Puffer hinzufügen */
 		kunden.add(kunde);
 		enterMessage = Thread.currentThread().getName() +" ENTER " +

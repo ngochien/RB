@@ -7,7 +7,7 @@ package fatima;
 public interface Puffer<E> {
   
   /* Lege ein Item in den Puffer */
-  public void enter(E element);
+  public void add(E element);
 
   /* Entnimm dem Puffer das Element */
   public E remove();

@@ -18,6 +18,8 @@ public class Utility {
 	 * @return
 	 */
 	public static int random(int min, int max) {
+		min = Math.min(min, max);
+		max = Math.max(min, max);
 		return (int) (min + Math.random() * (max - min + 1));
 	}
 

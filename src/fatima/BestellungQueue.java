@@ -15,14 +15,14 @@ import java.util.Queue;
  */
 public class BestellungQueue implements Puffer<Kunde>{
 	
-	private PriorityQueue<Kunde> bestellungen;	
+	private Queue<Kunde> bestellungen;	
 	
 	public BestellungQueue() {
 		bestellungen = new PriorityQueue<>(new Kunde.BestellungComparator());
 	}
 	
 	@Override
-	public synchronized void enter(Kunde kunde) {
+	public synchronized void add(Kunde kunde) {
 		bestellungen.add(kunde);
 		
 		System.out.println("\t\t\t\t" + Thread.currentThread().getName() +" LEGT Bestellung von "
@@ -60,7 +60,7 @@ public class BestellungQueue implements Puffer<Kunde>{
 		Kunde k2 = new Kunde(null); k2.bestellen();
 		Kunde k3 = new Kunde(null); k3.bestellen();
 		
-		q.enter(k1); q.enter(k2); q.enter(k3);
+		q.add(k1); q.add(k2); q.add(k3);
 		
 		System.out.println(q.remove().getBestellung());
 		System.out.println(q.remove().getBestellung());

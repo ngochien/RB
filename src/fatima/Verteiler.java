@@ -38,7 +38,7 @@ public class Verteiler extends Thread implements Observer {
 
 			// Puffer-Zugriffsmethode aufrufen --> Synchronisation über den
 			// Puffer!
-			warteschlange[0].enter(kunde);
+			warteschlange[0].add(kunde);
 
 			if (!isInterrupted()) {
 

@@ -1,5 +1,8 @@
 package fatima;
 
+import java.util.PriorityQueue;
+import java.util.Queue;
+
 /**
  * @author Fatima
  *
@@ -11,17 +14,17 @@ public class Kasse extends Thread {
 	private static final int MIN_BESTELLUNGSDAUER = 1 * 1000;
 	private static final int MAX_BESTELLUNGSDAUER = 1 * 1000;	
 	
-	private BestellungQueue bestellungen;
 	private Warteschlange warteschlange;
+	private Queue<Kunde> bestellungen;
 	private Laufband laufband;	
 	
 	private Kasse naechsteKasse;
 		
-	public Kasse(Warteschlange warteschlange, BestellungQueue bestellungen, Laufband laufband) {
+	public Kasse(Warteschlange warteschlange, Laufband laufband) {
 		zaehler++;		
-		this.setName("Kasse-" + zaehler);		
-		this.warteschlange = warteschlange;				
-		this.bestellungen = bestellungen;
+		this.setName("Kasse-" + zaehler);
+		this.bestellungen = new PriorityQueue<>(new Kunde.BestellungComparator());
+		this.warteschlange = warteschlange;		
 		this.laufband = laufband;
 	}
 	
@@ -81,33 +84,35 @@ public class Kasse extends Thread {
 	public int bedienen(Warteschlange warteschlange) {
 		Kunde aktuelleKunde = warteschlange.remove();
 		int bestellung = 0;
-		synchronized (aktuelleKunde) {
-			aktuelleKunde.notify();
-			try {
-				while (aktuelleKunde.getBestellung() == 0) {
-					System.out.println("\t\t\t\t" + Thread.currentThread().getName()
-									+ " WARTET auf Bestellung von " + aktuelleKunde.getName());
-					aktuelleKunde.wait();
+		if (aktuelleKunde != null) {
+			synchronized (aktuelleKunde) {
+				aktuelleKunde.notify();
+				try {
+					while (aktuelleKunde.getBestellung() == 0) {
+						System.out.println("\t\t\t\t" + Thread.currentThread().getName()
+										+ " WARTET auf Bestellung von " + aktuelleKunde.getName());
+						aktuelleKunde.wait();
+					}
+					bestellung = aktuelleKunde.getBestellung();
+					
+					System.out.format("\t\t\t\t%s NIMMT gerade Bestellung von %s AN...\n",
+										Thread.currentThread().getName(), aktuelleKunde.getName());
+					
+					Thread.sleep(Utility.random(MIN_BESTELLUNGSDAUER, MAX_BESTELLUNGSDAUER));
+					
+					System.out.format("%s HAT %d Burger bei %s BESTELLT und WARTET nun...\n\n",
+					aktuelleKunde.getName(), aktuelleKunde.getBestellung(), Thread.currentThread().getName());
+					
+					bestellungen.add(aktuelleKunde); // Wartezeit startet hier
+					
+				} catch (InterruptedException e) {
+					System.err.println(Thread.currentThread().getName() + " WURDE GEWECKT");
+					Thread.currentThread().interrupt();
+					e.printStackTrace();
+					return 0;
 				}
-				bestellung = aktuelleKunde.getBestellung();
-				
-				System.out.format("\t\t\t\t%s NIMMT gerade Bestellung von %s AN...\n",
-									Thread.currentThread().getName(), aktuelleKunde.getName());
-				
-				Thread.sleep(Utility.random(MIN_BESTELLUNGSDAUER, MAX_BESTELLUNGSDAUER));
-				
-				System.out.format("\t\t\t\t%s HAT %d Burger bei %s BESTELLT und WARTET nun...\n\n",
-				aktuelleKunde.getName(), aktuelleKunde.getBestellung(), Thread.currentThread().getName());
-				
-				bestellungen.enter(aktuelleKunde); // Wartezeit startet hier
-				
-			} catch (InterruptedException e) {
-				System.err.println(Thread.currentThread().getName() + " WURDE GEWECKT");
-				Thread.currentThread().interrupt();
-				e.printStackTrace();
-				return 0;
 			}
-		}						
+		}
 		return bestellung;
 	}	
 	

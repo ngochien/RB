@@ -12,10 +12,10 @@ public class Lokal {
 
 	public static final int SIMULATION_ZEIT = 10 * 1000;
 	
-	public static final int ANZAHL_PLATZ = 5;
+	public static final int ANZAHL_PLATZ = 500;
 	public static final int ZEITRAUM = 1000 * 1000;
 	public static final int MIN_ANZAHL_KUNDEN = 1;
-	public static final int MAX_ANZAHL_KUNDEN = 3;
+	public static final int MAX_ANZAHL_KUNDEN = 2;
 	
 	public static final int ANZAHL_SERVICE_KRAFT = 2;
 	public static final int ANZAHL_KUECHE_KRAFT = 3;

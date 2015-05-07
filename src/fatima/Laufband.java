@@ -27,7 +27,7 @@ public class Laufband implements Puffer<String>{
 
 	/* Producer (Erzeuger) rufen die Methode ENTER auf */
 	@Override
-	public synchronized void enter(String item) {
+	public synchronized void add(String item) {
 		/*
 		 * Pufferzugriff sperren (bzw. ggf. auf Zugriff warten): geschieht
 		 * automatisch durch Monitor-Eintritt ("synchronized" entspricht

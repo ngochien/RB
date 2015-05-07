@@ -37,12 +37,10 @@ public class Kueche extends Thread {
 	private static int anzahlBurger = Utility.random(MIN_ANZAHL_BURGER, MAX_ANZAHL_BURGER);
 	
 	private Laufband laufband;
-	private BestellungQueue bestellungen;
 	
-	public Kueche(BestellungQueue bestellungen, Laufband laufband) {
+	public Kueche(Laufband laufband) {
 		zaehler1++;		
-		this.setName("KuecheKraft-" + zaehler1);		
-		this.bestellungen = bestellungen;
+		this.setName("Kueche-" + zaehler1);				
 		this.laufband = laufband;
 	}
 
@@ -52,12 +50,13 @@ public class Kueche extends Thread {
 			synchronized (getClass()) {
 				while (anzahlBurger() == 0) {
 					try {
-						System.out.println(Thread.currentThread().getName() + " WARTET... KEINE BESTELLUNG");
+						System.out.println(Thread.currentThread().getName() + " WARTET... KEINE BESTELLUNG\n");
 						getClass().wait();						
 					} catch (InterruptedException e) {
 						System.err.println(Thread.currentThread().getName() + " WURDE beim Warten GEWECKT");
 						Thread.currentThread().interrupt();
 						e.printStackTrace();
+						System.out.println(Thread.currentThread().getName() + " BEENDET");
 						return;
 					}
 				}
@@ -71,7 +70,7 @@ public class Kueche extends Thread {
 	public void arbeiten() {
 		try {
 			Thread.sleep(Utility.random(MIN_ZUBEREITUNGSZEIT, MAX_ZUBEREITUNGSZEIT));
-			laufband.enter("Burger-" + ++zaehler2);			
+			laufband.add("Burger-" + ++zaehler2);			
 		} catch (InterruptedException e) {
 			System.err.println(Thread.currentThread().getName() + " WURDE beim Schlafen GEWECKT");
 			Thread.currentThread().interrupt();

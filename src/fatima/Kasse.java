@@ -131,7 +131,11 @@ public class Kasse extends Thread {
 					kunde.notify();										
 				}
 			}			
-			
+		} else {
+			synchronized (warteschlange) {
+				System.err.println("KEINE BESTELLUNGEN UPS");
+				warteschlange.wait();
+			}
 		}
 	}
 }

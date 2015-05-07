@@ -33,21 +33,24 @@ public class Warteschlange implements Puffer<Kunde> {
 
 	@Override
 	public synchronized Kunde remove() {				
-		Kunde kunde;
-		while (kunden.size() == 0) {
-			try {
-				System.out.println(Thread.currentThread().getName() + " WARTET auf neue Kunde");
-				this.wait();
-			} catch (InterruptedException e) {				
-				System.err.println(Thread.currentThread().getName() + " WURDE beim Warten GEWECKT");
-				Thread.currentThread().interrupt();
-				return null;
-			}
-		}		
-		kunde = kunden.remove(0);		
-		System.out.println("\t\t\t\t" + Thread.currentThread().getName() +" HOLT "
-					+ kunde.getName() + " aus der Warteschlange-" + id + ": Länge = " + kunden.size());		
+		Kunde kunde = null;
+//		while (kunden.size() == 0) {
+//			try {
+//				System.out.println(Thread.currentThread().getName() + " WARTET auf neue Kunde");
+//				this.wait();
+//			} catch (InterruptedException e) {				
+//				System.err.println(Thread.currentThread().getName() + " WURDE beim Warten GEWECKT");
+//				Thread.currentThread().interrupt();
+//				return null;
+//			}
+//		}
 		
+		// Quick fix
+		if (kunden.size() > 0) {
+			kunde = kunden.remove(0);		
+			System.out.println("\t\t\t\t" + Thread.currentThread().getName() +" HOLT "
+						+ kunde.getName() + " aus der Warteschlange-" + id + ": Länge = " + kunden.size());		
+		}
 		return kunde;
 	}
 

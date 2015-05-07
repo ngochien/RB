@@ -49,6 +49,7 @@ public class Kunde extends Thread {
 	}
 
 	public synchronized void bestellen() throws InterruptedException {
+		
 		bestellung = Utility.random(MIN_BESTELLUNG, MAX_BESTELLUNG);
 		System.out.println(Thread.currentThread().getName() + " BESTELLT " + bestellung + " BURGER");
 		this.notify();						
@@ -57,8 +58,7 @@ public class Kunde extends Thread {
 	
 	public void run() {	
 		try {
-			if (kommen()) {				
-				sichEinreihen(verkaufsraum.getAktuelleWarteschlange());
+			if (kommen()) {								
 				bestellen();
 				bezahlen();
 				verlassen();							
@@ -86,11 +86,6 @@ public class Kunde extends Thread {
 	public synchronized void verlassen() throws InterruptedException {
 		Thread.sleep(Utility.random(MIN_ZEIT, MAX_ZEIT));
 		verkaufsraum.verlassen();
-	}
-		
-	public synchronized void sichEinreihen(Warteschlange warteschlange) throws InterruptedException {
-		warteschlange.add(this);	
-		this.wait();
 	}	
 	
 	public synchronized void bezahlen() {

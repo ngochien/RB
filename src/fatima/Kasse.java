@@ -1,5 +1,7 @@
 package fatima;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
@@ -14,7 +16,7 @@ public class Kasse extends Thread {
 	private static final int MIN_BESTELLUNGSDAUER = 1 * 1000;
 	private static final int MAX_BESTELLUNGSDAUER = 1 * 1000;	
 	
-	private Warteschlange warteschlange;
+	private List<Kunde> warteschlange;
 	private Queue<Kunde> bestellungen;
 	private Laufband laufband;	
 	
@@ -22,11 +24,11 @@ public class Kasse extends Thread {
 	
 	private boolean prioritaet;
 	
-	public Kasse(Warteschlange warteschlange, Laufband laufband) {
+	public Kasse(Laufband laufband) {
 		zaehler++;		
 		this.setName("Kasse-" + zaehler);
 		this.bestellungen = new PriorityQueue<>(new Kunde.BestellungComparator());
-		this.warteschlange = warteschlange;		
+		this.warteschlange = new LinkedList<>();		
 		this.laufband = laufband;
 	}
 	
@@ -43,7 +45,7 @@ public class Kasse extends Thread {
 //			kassieren...
 //			} else {
 //				weiter bedienen
-			int bestellung = bedienen(warteschlange);
+			int bestellung = bedienen();
 			if (bestellung > 0) {
 				erhoeheAnzahlBestellungen();				
 				meldeBestellung(bestellung);							
@@ -58,6 +60,12 @@ public class Kasse extends Thread {
 		System.out.println(Thread.currentThread().getName() + " BEENDET");
 	}
 
+	public synchronized void addKunde(Kunde kunde) {
+		warteschlange.add(kunde);		
+		System.out.println(Thread.currentThread().getName() +" ENTER " + kunde.getName() + 
+				" in die Warteschlange von" + getName() + ": Länge = " + warteschlange.size());
+	}
+	
 	/**
 	 * @param bestellung
 	 */
@@ -97,8 +105,8 @@ public class Kasse extends Thread {
 		}
 	}
 	
-	public int bedienen(Warteschlange warteschlange) {
-		Kunde aktuelleKunde = warteschlange.remove();
+	public int bedienen() {
+		Kunde aktuelleKunde = warteschlange.remove(0);
 		int bestellung = 0;
 		if (aktuelleKunde != null) {
 			synchronized (aktuelleKunde) {

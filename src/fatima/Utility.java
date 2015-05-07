@@ -18,7 +18,7 @@ public class Utility {
 	 * @return
 	 */
 	public static int random(int min, int max) {
-		return (int) (Math.random() * min + Math.random() * (max - min)) + 1;
+		return (int) (min + Math.random() * (max - min + 1));
 	}
 
 	

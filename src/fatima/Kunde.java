@@ -16,8 +16,8 @@ public class Kunde extends Thread {
 	/**
 	 * Ein Kunde bestellt zufällig verteilt zwischen 1 und 8 Burger. 
 	 */
-	private static final int MIN_BESTELLUNG = 1;
-	private static final int MAX_BESTELLUNG = 3;
+	private static final int MIN_BESTELLUNG = 2;
+	private static final int MAX_BESTELLUNG = 5;
 	
 	/**
 	 * Die Zeit, die der Kunde nach dem Erhalt der Ware braucht, bis er das Lokal verlassen hat.

@@ -18,21 +18,26 @@ public class Warteschlange implements Puffer<Kunde> {
 	
 	private List<Kunde> kunden; // Liste als Speicher
 	
-	private final int id;
+	private int id;	
+	
+	private String enterMessage;	
+	private String removeMessage;
+	private String waitingMessage;	
+	private String interruptedMessage;
 
 	public Warteschlange() {
-		kunden = new LinkedList<Kunde>();
+		kunden = new LinkedList<>();
 		zaehler++;
-		id = zaehler;
+		id = zaehler;		
 	}	
 	
 	@Override
-	public synchronized void enter(Kunde kunde) {
-		
+	public synchronized void enter(Kunde kunde) {				
 		/* Item zum Puffer hinzufügen */
 		kunden.add(kunde);
-		System.out.format(Thread.currentThread().getName() + " ENTER "
-						+ " Warteschlange-%d: %d Kunde(n) da \n", id, kunden.size());
+		enterMessage = Thread.currentThread().getName() +" ENTER " +
+				" in die Warteschlange-" + id + ": Länge = " + kunden.size();
+		System.out.println(enterMessage);
 		
 		/*
 		 * Wartenden Consumer wecken --> es müssen ALLE Threads geweckt werden
@@ -47,7 +52,7 @@ public class Warteschlange implements Puffer<Kunde> {
 	}
 
 	@Override
-	public synchronized Kunde remove() {
+	public synchronized Kunde remove() {		
 		/*
 		 * Pufferzugriff sperren (bzw. ggf. auf Zugriff warten): geschieht
 		 * automatisch durch Monitor-Eintritt ("synchronized" entspricht
@@ -58,22 +63,25 @@ public class Warteschlange implements Puffer<Kunde> {
 		/* Solange Puffer leer ==> warten! */
 		while (kunden.size() == 0) {
 			try {
-				System.out.println(Thread.currentThread().getName() + " wartet auf neue Kunde");
+				waitingMessage = Thread.currentThread().getName() + " WARTET auf neue Kunde";
+				System.out.println(waitingMessage);
 				this.wait(); // --> Warten in der Wait-Queue und Monitor des Puffers freigeben
 			} catch (InterruptedException e) {
 				/*
 				 * Ausführender Thread hat Interrupt erhalten --> Interrupt-Flag
 				 * im ausführenden Thread setzen und Methode beenden
 				 */
-				System.out.println(Thread.currentThread().getName() + " wurde beim Warten geweckt");
+				interruptedMessage = Thread.currentThread().getName() + " WURDE beim Warten GEWECKT";
+				System.out.println(interruptedMessage);
 				Thread.currentThread().interrupt();
 				return null;
 			}
 		}
 		/* Item aus dem Buffer entfernen */
-		kunde = kunden.remove(0);
-		System.out.format("\t\t\t\t" + Thread.currentThread().getName() + " HOLT %s "
-				+ "von Warteschlange-%d: %d Kunde(n) noch da \n", kunde.getName(), id, kunden.size());
+		kunde = kunden.remove(0);		
+		removeMessage = "\t\t\t\t" + Thread.currentThread().getName() +" HOLT "
+						+ kunde.getName() + " aus der Warteschlange-" + id + ": Länge = " + kunden.size();
+		System.out.println(removeMessage);
 
 		/*
 		 * Wartenden Producer wecken --> es müssen ALLE Threads geweckt werden

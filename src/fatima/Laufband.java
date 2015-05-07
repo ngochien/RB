@@ -50,7 +50,7 @@ public class Laufband implements Puffer<String>{
 		}
 		/* Item zum Puffer hinzuf�gen */
 		items.add(item);
-		System.out.format("\t\t\t\t%s LEGT 1 Burger auf das Laufband AUF: %d Burger noch da\n",
+		System.out.format("\t\t\t\t%s LEGT 1 BURGER auf das Laufband: %d Burger noch da\n",
 							Thread.currentThread().getName(), items.size());
 
 		/*
@@ -91,7 +91,7 @@ public class Laufband implements Puffer<String>{
 		}
 		/* Item aus dem Buffer entfernen */
 		item = items.remove(0);
-		System.out.format("\t\t\t\t%s ENTNIMMT 1 Burger aus dem Laufband: %d Burger noch da\n",
+		System.out.format("\t\t\t\t%s ENTNIMMT 1 BURGER aus dem Laufband: %d Burger noch da\n",
 						Thread.currentThread().getName(), items.size());
 
 		/*

@@ -3,6 +3,8 @@
  */
 package fatima;
 
+import java.util.Comparator;
+
 /**
  * @author le
  *
@@ -88,4 +90,11 @@ public class Kunde extends Thread {
 //	int getZeitZuVerlassen() {
 //		return Utility.random(MIN_ZEIT_ZU_VERLASSEN, MAX_ZEIT_ZU_VERLASSEN);
 //	}
+
+	public static class BestellungComparator implements Comparator<Kunde> {
+		@Override
+		public int compare(Kunde k1, Kunde k2) {
+			return k1.getBestellung() - k2.getBestellung();
+		}
+	}
 }

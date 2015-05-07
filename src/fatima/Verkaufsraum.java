@@ -17,6 +17,8 @@ public class Verkaufsraum {
 	private int anzahlServiceKrafts;
 	private ServiceKraft[] serviceKrafts;
 
+	private BestellungQueue bestellungen;
+	
 	private Laufband laufband;
 	private int anzahlKuecheKrafts;
 	private KuecheKraft[] kuecheKrafts;	
@@ -34,11 +36,12 @@ public class Verkaufsraum {
 		this.warteschlangen = new Warteschlange[anzahlWarteschlangen];
 		this.serviceKrafts = new ServiceKraft[anzahlServiceKrafts];		
 		this.kuecheKrafts = new KuecheKraft[anzahlKuecheKrafts];
+		this.bestellungen = new BestellungQueue();
 		this.laufband = new Laufband();
 				
 		for (int i = 0; i < anzahlWarteschlangen; i++) {
 			warteschlangen[i] = new Warteschlange();
-			serviceKrafts[i] = new ServiceKraft(warteschlangen[i], laufband);
+			serviceKrafts[i] = new ServiceKraft(warteschlangen[i], bestellungen, laufband);
 		}		
 		
 		for (int i = 0; i < anzahlServiceKrafts; i++) {	
@@ -49,7 +52,7 @@ public class Verkaufsraum {
 		}
 		
 		for (int i = 0; i < anzahlKuecheKrafts; i++) {
-			kuecheKrafts[i] = new KuecheKraft(laufband);
+			kuecheKrafts[i] = new KuecheKraft(bestellungen, laufband);
 			kuecheKrafts[i].start();
 		}
 	}

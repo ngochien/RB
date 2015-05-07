@@ -3,6 +3,10 @@
  */
 package fatima;
 
+import java.util.PriorityQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.PriorityBlockingQueue;
+
 /**
  * @author le
  *
@@ -14,15 +18,17 @@ public class ServiceKraft extends Thread {
 	private static final int MIN_BESTELLUNGSDAUER = 1 * 1000;
 	private static final int MAX_BESTELLUNGSDAUER = 1 * 1000;	
 	
+	private BestellungQueue bestellungen;
 	private Warteschlange warteschlange;
-	private Laufband laufband;
+	private Laufband laufband;	
 	
 	private ServiceKraft kollege;
 		
-	public ServiceKraft(Warteschlange warteschlange, Laufband laufband) {
+	public ServiceKraft(Warteschlange warteschlange, BestellungQueue bestellungen, Laufband laufband) {
 		zaehler++;		
-		this.setName("ServiceKraft-" + zaehler);
-		this.warteschlange = warteschlange;		
+		this.setName("ServiceKraft-" + zaehler);		
+		this.warteschlange = warteschlange;				
+		this.bestellungen = bestellungen;
 		this.laufband = laufband;
 	}
 	
@@ -40,18 +46,17 @@ public class ServiceKraft extends Thread {
 //				weiter bedienen
 			int bestellung = bedienen(warteschlange);
 			if (bestellung >= 0) {
-				erhoeheAnzahlBestellungen();
-				System.out.format("\t\t\t\t%s hat bis jetzt %d Bestellungen ANGENOMMEN\n\n",
-								Thread.currentThread().getName(), anzahlBestellungen());
+				erhoeheAnzahlBestellungen();				
 				if (kollege.anzahlBestellungen() - this.anzahlBestellungen() >= 3) {
 					System.err.format("\n----------PRIORITÄT FÜR %s----------\n\n", Thread.currentThread().getName());
 					Thread.currentThread().setPriority(MAX_PRIORITY);
 				} else {
 					Thread.currentThread().setPriority(NORM_PRIORITY);
 					synchronized (KuecheKraft.class) {
-						KuecheKraft.mehrBurger(bestellung);
+						KuecheKraft.mehrBurger(bestellung);						
 						KuecheKraft.class.notifyAll();						
 					}
+					ausliefern();
 				}
 			}
 //		}			
@@ -74,29 +79,33 @@ public class ServiceKraft extends Thread {
 	}
 	
 	public synchronized void erhoeheAnzahlBestellungen() {
-		anzahlBestellungen++;
+		anzahlBestellungen = anzahlBestellungen() + 1;
+		System.out.format("\t\t\t\t%s hat bis jetzt %d Bestellungen ANGENOMMEN\n\n",
+							Thread.currentThread().getName(), anzahlBestellungen());
 	}
 	
 	public int bedienen(Warteschlange warteschlange) {
-		Kunde naechsteKunde = warteschlange.remove();
+		Kunde aktuelleKunde = warteschlange.remove();
 		int bestellung = 0;
-		synchronized (naechsteKunde) {
-			naechsteKunde.notify();
+		synchronized (aktuelleKunde) {
+			aktuelleKunde.notify();
 			try {
-				while (naechsteKunde.getBestellung() == 0) {
+				while (aktuelleKunde.getBestellung() == 0) {
 					System.out.println("\t\t\t\t" + Thread.currentThread().getName()
-									+ " WARTET auf Bestellung von " + naechsteKunde.getName());
-					naechsteKunde.wait();
+									+ " WARTET auf Bestellung von " + aktuelleKunde.getName());
+					aktuelleKunde.wait();
 				}
-				bestellung = naechsteKunde.getBestellung();
+				bestellung = aktuelleKunde.getBestellung();
 				
 				System.out.format("\t\t\t\t%s NIMMT gerade Bestellung von %s AN...\n",
-									Thread.currentThread().getName(), naechsteKunde.getName());
+									Thread.currentThread().getName(), aktuelleKunde.getName());
 				
 				Thread.sleep(Utility.random(MIN_BESTELLUNGSDAUER, MAX_BESTELLUNGSDAUER));
 				
 				System.out.format("\t\t\t\t%s HAT %d Burger bei %s BESTELLT und WARTET nun...\n\n",
-				naechsteKunde.getName(), naechsteKunde.getBestellung(), Thread.currentThread().getName());
+				aktuelleKunde.getName(), aktuelleKunde.getBestellung(), Thread.currentThread().getName());
+				
+				bestellungen.enter(aktuelleKunde); // Wartezeit startet hier
 				
 			} catch (InterruptedException e) {
 				System.err.println(Thread.currentThread().getName() + " WURDE GEWECKT");
@@ -108,11 +117,7 @@ public class ServiceKraft extends Thread {
 		return bestellung;
 	}	
 	
-	void BurgerEntnehemen() {
-		System.out.println("Weiter können die Service-Kräfte die Burger	nur in der Folge entnehmen,	wie	die	Burger auf das Lieferband gestellt worden sind (Queue).");
-	}
-	
-	void BurgerUebernehmen() {
-		System.out.println(" Die Service-Kraft übergibt die Burger erst, wenn der Kunde bezahlt hat.");
+	public void ausliefern() {
+//		System.out.println("Die Service-Kraft übergibt die Burger erst, wenn der Kunde bezahlt hat.");
 	}
 }

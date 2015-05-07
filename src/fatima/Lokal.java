@@ -14,8 +14,8 @@ public class Lokal {
 	
 	public static final int ANZAHL_PLATZ = 50;
 	public static final int ZEITRAUM = 1000 * 1000;
-	public static final int MIN_ANZAHL_KUNDEN = 2;
-	public static final int MAX_ANZAHL_KUNDEN = 3;
+	public static final int MIN_ANZAHL_KUNDEN = 3;
+	public static final int MAX_ANZAHL_KUNDEN = 5;
 	
 	public static final int ANZAHL_SERVICE_KRAFT = 2;
 	public static final int ANZAHL_KUECHE_KRAFT = 3;

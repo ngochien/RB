@@ -12,7 +12,10 @@ public class Lokal {
 
 	public static final int SIMULATION_ZEIT = 6000 * 1000;
 	
+	public static final int MAX_WARTEZEIT = 5 * 1000;
+	
 	public static final int ANZAHL_PLATZ = 5;
+	
 	public static final int ZEITRAUM = 3000 * 1000;
 	public static final int MIN_ANZAHL_KUNDEN = 2;
 	public static final int MAX_ANZAHL_KUNDEN = 2;
@@ -24,7 +27,7 @@ public class Lokal {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		Verkaufsraum verkaufsraum = new Verkaufsraum(ANZAHL_PLATZ, ANZAHL_SERVICE_KRAFT, ANZAHL_KUECHE_KRAFT);
+		Verkaufsraum verkaufsraum = new Verkaufsraum(ANZAHL_PLATZ, ANZAHL_SERVICE_KRAFT, ANZAHL_KUECHE_KRAFT, MAX_WARTEZEIT);
 		Kundengenerator generator = new Kundengenerator(verkaufsraum, ZEITRAUM, MIN_ANZAHL_KUNDEN, MAX_ANZAHL_KUNDEN);
 		generator.setName("Kundengenerator");
 		

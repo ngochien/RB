@@ -2,6 +2,8 @@ package fatima;
 
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * @author Fatima
@@ -18,25 +20,30 @@ public class Kasse extends Thread {
 	private Queue<Kunde> bestellungen;
 	private Laufband laufband;	
 	
-	/**
-	 * Die Anzahl der angenommenen Bestellungen
-	 */
-	private int anzahlBestellungen;
-	
 	private Kasse andereKasse;
-	
-	private boolean prioritaet;
-	
+	private Kunde wartendeKunde;
+	private int anzahlBestellungen;		
+	private boolean zuWenigeBestellung;
+		
 	public Kasse(Warteschlange warteschlange, Laufband laufband) {
 		zaehler++;		
-		this.setName("Kasse-" + zaehler);
+		this.setName("KASSE-" + zaehler);
 		this.bestellungen = new PriorityQueue<>(new Kunde.BestellungComparator());
 		this.warteschlange = warteschlange;		
 		this.laufband = laufband;
-	}	
+	}		
 	
 	public void setAndereKasse(Kasse andereKasse) {
 		this.andereKasse = andereKasse;
+	}
+	
+	public synchronized Kunde getWartendeKunde() {
+		return wartendeKunde;
+	}
+	
+	public synchronized void setWartendeKunde(Kunde wartendeKunde) {
+		System.err.println(wartendeKunde.getName() + " HAT ZU LANGE GEWARTET");
+		this.wartendeKunde = wartendeKunde;
 	}
 	
 	public void run() {
@@ -45,13 +52,10 @@ public class Kasse extends Thread {
 			while (!isInterrupted()) {				
 				int bestellung = bedienen(warteschlange);
 				if (bestellung > 0) {
-					erhoeheAnzahlBestellungen();				
-					meldeBestellung(bestellung);							
+					mehrBestellung();
+					meldeBestellung(bestellung);					
 				}
-				if (!prioritaet) {
-					ausliefern();	// Wenn er keine Priorität hat, dann arbeitet er normal weiter,
-									// ansonsten versucht er sofort neue Bestellung anzunehmen.
-				}			
+				ausliefern();
 			}
 		} catch (InterruptedException e) {
 			System.err.println(Thread.currentThread().getName() + " WURDE GEWECKT");
@@ -62,7 +66,7 @@ public class Kasse extends Thread {
 	}
 
 	public int bedienen(Warteschlange warteschlange) throws InterruptedException {
-		Kunde aktuelleKunde = warteschlange.remove();
+		final Kunde aktuelleKunde = warteschlange.remove();
 		int bestellung = 0;
 		if (aktuelleKunde != null) {
 			synchronized (aktuelleKunde) {
@@ -82,11 +86,20 @@ public class Kasse extends Thread {
 				System.out.format("%s HAT %d Burger bei %s BESTELLT und WARTET nun...\n\n",
 				aktuelleKunde.getName(), aktuelleKunde.getBestellung(), Thread.currentThread().getName());
 				
-				bestellungen.add(aktuelleKunde); // Wartezeit startet hier							
+				bestellungen.add(aktuelleKunde); // Wartezeit startet hier	
+		
+				new Timer().schedule(new TimerTask() {					
+					@Override
+					public void run() {
+						if (bestellungen.contains(aktuelleKunde)) {							
+							setWartendeKunde(aktuelleKunde);						
+						}
+					}
+				}, Lokal.MAX_WARTEZEIT);
 			}
 		}
 		return bestellung;
-	}	
+	}		
 	
 	public void meldeBestellung(int bestellung) {
 		synchronized (Kueche.class) {
@@ -99,42 +112,61 @@ public class Kasse extends Thread {
 		return anzahlBestellungen;
 	}
 	
-	public synchronized void erhoeheAnzahlBestellungen() {
+	public synchronized void mehrBestellung() {
 		anzahlBestellungen = anzahlBestellungen() + 1;
+		
 		System.out.format("\t\t\t\t%s HAT bis jetzt %d Bestellung(en) ANGENOMMEN\n\n",
 							Thread.currentThread().getName(), anzahlBestellungen());
 		
-		if (andereKasse.anzahlBestellungen() - this.anzahlBestellungen() >= 3) {
-			System.err.format("\n----------PRIORITÄT FÜR %s----------\n\n", Thread.currentThread().getName());
+		checkPrioritaet();
+	}
+	
+	private void checkPrioritaet() {
+		zuWenigeBestellung = (andereKasse.anzahlBestellungen() - this.anzahlBestellungen() >= 3);
+		
+		if (zuWenigeBestellung || getWartendeKunde() != null) {
 			Thread.currentThread().setPriority(MAX_PRIORITY);
-			prioritaet = true;
-		} else {
+			System.err.format("\n----------PRIORITÄT FÜR %s----------\n\n", Thread.currentThread().getName());			
+		} else {	
 			Thread.currentThread().setPriority(NORM_PRIORITY);
-			prioritaet = false;
 		}
 	}
 	
 	public void ausliefern() throws InterruptedException {
-		if (bestellungen.isEmpty() == false) {
-			Kunde kunde = bestellungen.peek();
-			int anzahl = kunde.getBestellung();
-			synchronized (kunde) {								
-				if(laufband.remove(anzahl)) {
-					kunde.notify();					
-					System.out.format("\t\t\t\t%s WARTET AUF BEZAHLUNG VON %s\n",
-							Thread.currentThread().getName(), kunde.getName());
-					
-					kunde.wait();	// Warte bis der Kunde bezahlt hat
-					bestellungen.remove(kunde);
-					System.out.format("\t\t\t\t%s GIBT %d BURGER AN %s\n", Thread.currentThread().getName(),
-										kunde.getBestellung(), kunde.getName());
-					kunde.notify();										
-				}
-			}			
-		} else {
+		if (bestellungen.isEmpty()) {
 			synchronized (warteschlange) {
-				System.err.println("KEINE BESTELLUNGEN UPS");
+				System.err.format("\t\t\t\t%s WARTET... KEINE KUNDE, KEINE BESTELLUNG\n",
+														Thread.currentThread().getName());
 				warteschlange.wait();
+			}
+		} else if (zuWenigeBestellung) {
+			System.err.format("\t\t\t\t%s HAT mehr als 3 KUNDEN WENIGER BEDIENT. Erst WEITER BEDIENEN. "
+							+ " AUSLIEFERUNG VERZÖGERN\n", Thread.currentThread().getName());
+		} else if (getWartendeKunde() != null && ausliefern(wartendeKunde) == true) {
+			setWartendeKunde(null);
+			Thread.currentThread().setPriority(NORM_PRIORITY);
+		} else {
+			ausliefern(bestellungen.peek());				
+		}
+	}
+
+	private boolean ausliefern(Kunde kunde) throws InterruptedException {		
+		synchronized (kunde) {								
+			if(laufband.remove(kunde.getBestellung())) {
+				kunde.notify();
+				
+				System.out.format("\t\t\t\t%s WARTET AUF BEZAHLUNG VON %s\n",
+									Thread.currentThread().getName(), kunde.getName());				
+				kunde.wait();	// Warte bis der Kunde bezahlt hat
+				
+				bestellungen.remove(kunde);
+				System.out.format("\t\t\t\t%s GIBT %d BURGER AN %s\n", Thread.currentThread().getName(),
+									kunde.getBestellung(), kunde.getName());
+				
+				kunde.notify();
+				return true;
+			} else {
+				return false;
 			}
 		}
 	}

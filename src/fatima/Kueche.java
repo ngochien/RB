@@ -40,7 +40,7 @@ public class Kueche extends Thread {
 	
 	public Kueche(Laufband laufband) {
 		zaehler1++;		
-		this.setName("Kueche-" + zaehler1);				
+		this.setName("KUECHE-" + zaehler1);				
 		this.laufband = laufband;
 	}
 

@@ -16,15 +16,17 @@ public class Verkaufsraum {
 	private Laufband laufband;		
 	private Warteschlange[] warteschlangen;	
 	
+	private final int maxWartezeit;
 	private int abgewieseneKunden;
 	private int aktuelleWarteschlange;
 
-	public Verkaufsraum(int anzahlPlatz, int anzahlKasse, int anzahlKueche) {		
+	public Verkaufsraum(int anzahlPlatz, int anzahlKasse, int anzahlKueche, int maxWartezeit) {		
 		this.laufband = new Laufband();
+		this.maxWartezeit = maxWartezeit;
 		this.kassen = new Kasse[anzahlKasse];
 		this.kuechen = new Kueche[anzahlKueche];
 		this.platz = new Semaphore(anzahlPlatz);
-		this.warteschlangen = new Warteschlange[anzahlKasse];
+		this.warteschlangen = new Warteschlange[anzahlKasse];		
 	}
 
 	public void oeffnen() {				
@@ -84,6 +86,10 @@ public class Verkaufsraum {
 	 */
 	public synchronized int getAbgewieseneKunden() {
 		return abgewieseneKunden;
+	}
+	
+	public int getMaxWartezeit() {
+		return maxWartezeit;
 	}
 
 	public synchronized Warteschlange getAktuelleWarteschlange() {

@@ -55,15 +55,5 @@ public class BestellungQueue implements Puffer<Kunde>{
 	
 	public static void main(String[] args) {
 		
-		BestellungQueue q = new BestellungQueue();
-		Kunde k1 = new Kunde(null); k1.bestellen();
-		Kunde k2 = new Kunde(null); k2.bestellen();
-		Kunde k3 = new Kunde(null); k3.bestellen();
-		
-		q.add(k1); q.add(k2); q.add(k3);
-		
-		System.out.println(q.remove().getBestellung());
-		System.out.println(q.remove().getBestellung());
-		System.out.println(q.remove().getBestellung());
 	}
 }

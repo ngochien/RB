@@ -1,13 +1,10 @@
-/**
- * 
- */
 package fatima;
 
 import java.util.LinkedList;
 import java.util.List;
 
 /**
- * @author le
+ * @author Fatima
  *
  */
 public class Laufband implements Puffer<String>{

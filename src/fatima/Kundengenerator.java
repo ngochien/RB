@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Diese Klasse generiert für einen angegebenen Zeitraum eine zufällige Anzahl von Kunden
  * 
- * @author le
+ * @author Fatima
  *
  */
 public class Kundengenerator extends Thread {

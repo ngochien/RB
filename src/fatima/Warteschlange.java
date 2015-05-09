@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * @author le
+ * @author Fatima
  */
 public class Warteschlange implements Puffer<Kunde> {
 
@@ -45,7 +45,6 @@ public class Warteschlange implements Puffer<Kunde> {
 //			}
 //		}
 		
-		// Quick fix
 		if (kunden.size() > 0) {
 			kunde = kunden.remove(0);		
 			System.out.println("\t\t\t\t" + Thread.currentThread().getName() +" HOLT "

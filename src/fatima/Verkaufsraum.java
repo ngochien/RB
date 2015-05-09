@@ -4,7 +4,7 @@ import java.util.concurrent.Semaphore;
 
 
 /**
- * @author le
+ * @author Fatima
  *
  */
 public class Verkaufsraum {
@@ -81,9 +81,7 @@ public class Verkaufsraum {
 		}
 	}
 
-	/**
-	 * Liefert die Anzahl der bisher abgewiesenen Kunden zurück.
-	 */
+	/** Anzahl der bisher abgewiesenen Kunden */
 	public synchronized int getAbgewieseneKunden() {
 		return abgewieseneKunden;
 	}

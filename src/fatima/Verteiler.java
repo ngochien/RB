@@ -12,7 +12,7 @@ import scheduler.Reportable;
  * 
  * Teilt die Kunden in die Warteschlangen auf
  * 
- * @author le
+ * @author Fatima
  *
  */
 public class Verteiler extends Thread implements Observer {

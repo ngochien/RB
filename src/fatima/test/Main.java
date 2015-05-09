@@ -9,7 +9,7 @@ import fatima.Kunde;
 import fatima.Helper;
 
 /**
- * @author le
+ * @author Fatima
  *
  */
 public class Main {

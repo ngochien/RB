@@ -114,7 +114,7 @@ public class Kasse extends Thread {
 			ausliefern(naechsteKunde);				
 		} else {
 			synchronized (warteschlange) {
-				System.err.format("\t\t\t\t%s WARTET... KEINE KUNDE, KEINE BESTELLUNG\n",
+				System.out.format("\t\t\t\t%s WARTET... KEINE KUNDE, KEINE BESTELLUNG\n",
 														Thread.currentThread().getName());
 				warteschlange.wait();
 			}
@@ -126,7 +126,7 @@ public class Kasse extends Thread {
 			if(laufband.remove(kunde.getBestellung())) {				
 				kunde.notify();
 				
-				System.err.format("\t\t\t\t%s WARTET AUF BEZAHLUNG VON %s\n",
+				System.out.format("\t\t\t\t%s WARTET AUF BEZAHLUNG VON %s\n",
 									Thread.currentThread().getName(), kunde.getName());				
 				kunde.wait();	// Warte bis der Kunde bezahlt hat
 				

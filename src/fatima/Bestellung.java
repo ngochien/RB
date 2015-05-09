@@ -4,7 +4,7 @@
 package fatima;
 
 /**
- * @author le
+ * @author Fatima
  *
  */
 public class Bestellung {

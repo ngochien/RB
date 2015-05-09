@@ -6,7 +6,7 @@ package fatima;
 import java.util.Comparator;
 
 /**
- * @author le
+ * @author Fatima
  *
  */
 public class Kunde extends Thread {

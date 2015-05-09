@@ -5,7 +5,7 @@ package fatima;
 
 /**
  * Das Lokal beinhaltet den Verkaufsraum und das Personal
- * @author le
+ * @author Fatima
  *
  */
 public class Lokal {

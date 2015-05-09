@@ -12,7 +12,7 @@ public class Lokal {
 
 	public static final int SIMULATION_ZEIT = 6000 * 1000;
 	
-	public static final int MAX_WARTEZEIT = 5 * 1000;
+	public static final int MAX_WARTEZEIT = 10 * 1000;
 	
 	public static final int ANZAHL_PLATZ = 5;
 	

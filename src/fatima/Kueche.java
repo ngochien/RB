@@ -17,8 +17,8 @@ public class Kueche extends Thread {
 	 * Jede  Hilfskraft  braucht   zufällig  verteilt zwischen  10   und  20
 	 *  Sekunden  für  die  Fertigstellung  eines  Burger.
 	 */
-	private static final int MIN_ZUBEREITUNGSZEIT = 10 * 1000;
-	private static final int MAX_ZUBEREITUNGSZEIT = 20 * 1000;
+	private static final int MIN_ZUBEREITUNGSZEIT = 3 * 1000;
+	private static final int MAX_ZUBEREITUNGSZEIT = 5 * 1000;
 	
 	/**
 	 * Anzahl der zu produzierenden Burger wenn keine Kundenbestellung
@@ -49,7 +49,6 @@ public class Kueche extends Thread {
 		while (!isInterrupted()) {	
 			arbeiten();
 		}
-		// Alle Burger fertig machen vor feierabend
 		System.err.println(Thread.currentThread().getName() + " WURDE BEENDET ");
 	}
 	
@@ -71,22 +70,19 @@ public class Kueche extends Thread {
 		}
 	}
 	
-	public static synchronized int anzahlBurger() {
-		System.out.format("%s CHECKT - NOCH ZU MACHEN: %d BURGER\n",
-							Thread.currentThread().getName(), anzahlBurger);
+	public static synchronized int anzahlBurger() {		
 		return anzahlBurger;
 	}
 	
 	public static synchronized void mehrBurger(int anzahl) {
 		anzahlBurger = anzahlBurger + anzahl;
-		System.out.format("\t\t\t\t%s MELDET eine Bestellung von %d BURGER\n"
-						+ "\t\t\t\tNOCH ZU MACHEN: %d BURGER\n",
-						Thread.currentThread().getName(), anzahl , anzahlBurger);
+		System.out.format("\t\t\t\t%s MELDET eine Bestellung von %d BURGER - " + "NOCH ZU MACHEN: %d BURGER\n",
+							Thread.currentThread().getName(), anzahl , anzahlBurger);
 	}
 	
 	public static synchronized void wenigerBurger() {
 		anzahlBurger = anzahlBurger - 1;
-		System.out.format("%s MACHT nun 1 BURGER...\nNOCH ZU MACHEN: %d BURGER\n",
+		System.out.format("%s MACHT nun 1 BURGER... - NOCH ZU MACHEN: %d BURGER\n",
 							Thread.currentThread().getName(), anzahlBurger);
 	}
 	
